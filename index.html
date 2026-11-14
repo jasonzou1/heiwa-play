@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="和平物语" />
-<title>和平物语 拯救世界的冒险谭 Demo v0.1.636</title>
+<title>和平物语 拯救世界的冒险谭 Demo v0.1.637</title>
 <style>
 
   *{box-sizing:border-box}
@@ -3461,7 +3461,7 @@
 <body>
 <div class="app">
   <div class="topbar">
-    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.636</div></div>
+    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.637</div></div>
     <div class="resources" id="topResources"></div>
   </div>
 
@@ -3479,7 +3479,7 @@
         <div class="title-logo-wrap">
           <div class="title-kicker">HEIWA MONOGATARI</div>
           <h1 class="game-title"><span>和平物语</span><small>拯救世界的冒险谭</small></h1>
-          <div class="title-version">Demo v0.1.636</div>
+          <div class="title-version">Demo v0.1.637</div>
         </div>
         <div class="title-controls">
           <div id="titleMenu" class="title-menu"></div>
@@ -23860,11 +23860,13 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
      · 手机：列距 104、行距 76、节点 46（CSS 再按手机收成 40~44），11 层要横着拖；
      · 桌面：节点 56、图标 36（12×12 的原图正好 3 倍整数）、行距 96，列距收到 100 —— 11 层一屏排下（1104 ≤ 框内 1128），不用横拖。
      TOP 是最上面那一排的圆心高度，HB 是最下面那一排圆心往下留给名字的空白；节点的 left/top 按 R 从圆心往回推。 */
-  const GEO215={phone:{COL:104,ROW:76,R:23,X0:60,XR:80,TOP:56,HB:52},desk:{COL:100,ROW:96,R:28,X0:48,XR:56,TOP:68,HB:58}};
+  /* · 手机横屏（body.land637，样式见文件末尾那一块）：高度只有 390 左右 —— 节点 36、图标 24（12px 原图 2 倍）、行距 60（名字放得下）、列距 74，11 层 806 宽一屏排下 */
+  const GEO215={phone:{COL:104,ROW:76,R:23,X0:60,XR:80,TOP:56,HB:52},desk:{COL:100,ROW:96,R:28,X0:48,XR:56,TOP:68,HB:58},
+    land:{COL:74,ROW:60,R:18,X0:32,XR:34,TOP:38,HB:38}};
   let COL,ROW,CY,R,X0,XR,HB;
   const narrow215=()=>typeof matchMedia==='function'&&matchMedia('(max-width:760px)').matches;
   function geo(){
-    const g=narrow215()?GEO215.phone:GEO215.desk;
+    const g=document.body?.classList.contains('land637')?GEO215.land:narrow215()?GEO215.phone:GEO215.desk;
     ({COL,ROW,R,X0,XR,HB}=g);CY=g.TOP+1.5*g.ROW;
   }
   geo();
@@ -45212,3 +45214,143 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
      而这正是 v0.1.370 特意把「原版」也做成一张卡要避免的事
      （「怎么换回去」不该让人去猜）。所以维持平铺，`.skin370-grid` 本来就会换行。
      ================================================================ -->
+<script>
+/* ===== 手机横屏那一档（land637）=====
+   「手机级的屏幕（短边 ≤ 500）横着拿」时：
+   ① 网页按 860 宽来排 —— 改 <meta viewport> 的 width，比 860 窄的机型（SE 667、iPhone 14 Safari 750）等比缩一点，宽的（Pro Max 932）照原宽。
+      为什么要统一：横屏宽度 667~932 正好横跨 760 那条线，同一个横屏，窄的机型走手机那一套（竖排、折叠带）、宽的走电脑那一套，
+      全文件按宽度分档的规则有 120 多条，各自猜不准。统一成「电脑那一套的结构」再压矮，规则只写一份。
+   ② body 挂 land637，这一档的样式都挂在这个类上（媒体查询看不见「是不是手机」—— 小窗口的电脑浏览器不该进这一档）。
+   ③ 转回竖屏时 viewport 还原成 device-width，类摘掉。
+   判「手机级」用 screen 的短边（不随 viewport 改变），判「横着拿」用 orientation（viewport 改了宽也还是横的）。 */
+(function(){
+  const vp=document.querySelector('meta[name="viewport"]');
+  const PORTRAIT_VP=vp?vp.getAttribute('content'):'width=device-width, initial-scale=1.0, viewport-fit=cover';
+  const LAND_W=860;
+  const phoneClass=()=>Math.min(screen.width||9999,screen.height||9999)<=500;
+  const landNow=()=>phoneClass()&&matchMedia('(orientation: landscape)').matches;
+  let on=null;
+  function apply(){
+    const want=landNow();
+    if(want===on)return;
+    on=want;
+    if(vp){
+      // 设备横屏宽度（CSS px）比 860 宽就照原宽排，窄就排成 860 再缩
+      const devW=Math.max(screen.width||0,screen.height||0);
+      vp.setAttribute('content',want&&devW<LAND_W?`width=${LAND_W}, viewport-fit=cover`:PORTRAIT_VP);
+    }
+    document.body.classList.toggle('land637',want);
+    // 地图几何跟着这一档走（GEO215.land），跑局画面开着就重画一次
+    try{
+      if(typeof combat!=='undefined'&&combat){UI.renderCombat?.()}
+      else if(document.querySelector('#screen-run.active'))UI.renderRun?.();
+    }catch(e){}
+  }
+  Game.land637=()=>!!on;
+  const st=document.createElement('style');
+  st.textContent=`
+  /* ---- 整体：外边距收到最小；横屏时刘海在左边或右边（viewport-fit=cover），两边让开安全区 ---- */
+  body.land637 .app{padding:2px max(6px,env(safe-area-inset-right)) 2px max(6px,env(safe-area-inset-left))!important}
+  body.land637 .screen{margin:0!important}
+  body.land637 #screen-run>.panel,body.land637 #screen-combat>.panel{padding:3px!important}
+  body.land637 #runContent .rpg-run-shell{gap:4px!important;grid-template-columns:minmax(0,1fr)!important}
+  body.land637 #runContent .rpg-run-shell>*{min-width:0}
+  /* ---- 局内顶栏：一行 40 高，位置两行并一行（地区名 + 第 N / 10 步），点点条不要；四格的字小一号；钮 36 高 ---- */
+  body.land637 :is(#runContent,#combatContent) .rf570-wrap{margin:0!important}
+  body.land637 :is(#runContent,#combatContent) .rf570{height:40px;gap:12px;padding:0 6px}
+  body.land637 :is(#runContent,#combatContent) .rf570-loc{min-width:0;flex:0 1 auto;flex-direction:row;align-items:baseline;gap:8px;white-space:nowrap;overflow:hidden}
+  body.land637 :is(#runContent,#combatContent) .rf570-l1{gap:6px}
+  body.land637 :is(#runContent,#combatContent) .rf570-l1>small,body.land637 :is(#runContent,#combatContent) .rf570-dots{display:none}
+  body.land637 :is(#runContent,#combatContent) .rf570 small{font-size:14px}
+  body.land637 :is(#runContent,#combatContent) .rf570 .pg559-chip{gap:4px}
+  body.land637 :is(#runContent,#combatContent) .rf570 .pg559-chip>span{display:flex;align-items:baseline;gap:4px}
+  body.land637 :is(#runContent,#combatContent) .rf570 .pg559-chip svg,body.land637 #runContent .rf570 .pg559-chip img{flex-basis:24px;width:24px;height:24px}
+  body.land637 :is(#runContent,#combatContent) .rf570 .pg559-chip b{font-size:22px}
+  body.land637 :is(#runContent,#combatContent) .rf570-cz{width:22px;height:22px;flex-basis:22px;font-size:14px}
+  body.land637 :is(#runContent,#combatContent) .rf570-btn,body.land637 :is(#runContent,#combatContent) .rf570 .ff381{height:36px;padding:0 8px;gap:4px}
+  body.land637 :is(#runContent,#combatContent) .rf570-btn[aria-expanded="true"]{padding:0 7px}
+  body.land637 :is(#runContent,#combatContent) .rf570-i{width:22px;height:22px}
+  body.land637 :is(#runContent,#combatContent) .rf570-panel{max-height:calc(100vh - 60px)}
+  /* ---- 肉鸽地图：抬头只留「选择路线」那块牌子和深潜倒计时，那一长句说明不要（第一次进地图的教程里有）；画布用 GEO215.land ---- */
+  body.land637 #runContent .map215{padding:4px 6px 6px!important}
+  body.land637 #runContent .mp-head{gap:8px!important;margin:0 0 2px!important;min-height:0!important;font-size:14px;line-height:1.2}
+  body.land637 #runContent .mp-head .section-title,body.land637 #runContent .mp-tip{display:none!important}
+  body.land637 #runContent .mp-head .deepen290{margin:0!important;padding:0!important;font-size:14px}
+  body.land637 #runContent .mp-head:not(:has(.deepen290)){display:none}
+  body.land637 .mp-n{width:36px!important;height:36px!important}
+  body.land637 .mp-n img{width:24px!important;height:24px!important}
+  body.land637 .mp-lab{top:37px!important;font-size:11px!important}
+  body.land637 .mp-n.fog .mp-lab{display:none}
+  body.land637 .mp-ly{font-size:11px!important;top:-2px}
+  body.land637 .mp-q{font-size:18px!important}
+  /* ---- 队伍栏：一条，每人只剩名字 + 血条 + 血量（立绘、技能等级点开详情看） ---- */
+  body.land637 #runContent .party-compact{gap:6px!important}
+  body.land637 #runContent .party-compact .party-mini{padding:3px 8px!important;min-height:0!important}
+  body.land637 #runContent .pc573-face,body.land637 #runContent .party-compact .party-mini-skill{display:none!important}
+  body.land637 #runContent .pc573-txt{flex-direction:row;align-items:center;gap:8px}
+  body.land637 #runContent .party-compact .party-mini-name b{font-size:16px}
+  body.land637 #runContent .pc634-hp{flex:1;min-width:0}
+  body.land637 #runContent .party-compact .party-mini-hp{font-size:12px}
+  /* ---- 标题：Logo 在左、两颗钮在右，一屏放下 ---- */
+  body.land637.title-mode .app{padding:0!important}
+  body.land637 .title-shell{min-height:0!important;height:100dvh;overflow:hidden}
+  body.land637 .title-ui{min-height:100%;flex-direction:row;align-items:center;justify-content:center;gap:48px;padding:12px max(24px,env(safe-area-inset-right)) 12px max(24px,env(safe-area-inset-left))!important}
+  body.land637 .title-controls{width:min(360px,44vw);margin:0!important}
+  body.land637 .title-button{height:64px}
+  /* ---- 据点：顶栏 48、开始卡 96、六格 2×3 每格 100 高 —— 一屏放下 ---- */
+  body.land637 #screen-hq .pg559-head{height:48px!important;min-height:0!important;padding:0 12px!important;gap:16px!important}
+  body.land637 #screen-hq .pg559-head h1{font-size:22px!important}
+  body.land637 #screen-hq .hq556-res{gap:14px}
+  body.land637 #screen-hq .pg559-chip svg{flex-basis:22px;width:22px;height:22px}
+  body.land637 #screen-hq .pg559-chip>span{display:flex;align-items:baseline;gap:4px}
+  body.land637 #screen-hq .pg559-chip b{font-size:22px}
+  body.land637 #screen-hq .pg559-chip small{font-size:14px}
+  body.land637 #screen-hq .pg559-head .pg559-btn{height:36px;padding:0 10px}
+  body.land637 #screen-hq .pg559-body{padding:6px 12px 8px!important;gap:8px!important}
+  body.land637 #screen-hq .hq556-start{height:auto;padding:8px 12px;gap:14px}
+  body.land637 #screen-hq .hq556-face{flex:0 0 60px;width:60px;height:68px}
+  body.land637 #screen-hq .hq556-face img{transform:none}
+  body.land637 #screen-hq .hq556-info{gap:6px}
+  body.land637 #screen-hq .hq556-h{font-size:22px}
+  body.land637 #screen-hq .hq556-meta{grid-template-columns:repeat(3,auto);gap:0 24px}
+  body.land637 #screen-hq .hq556-meta .k{font-size:14px}
+  body.land637 #screen-hq .hq556-meta .v{height:30px}
+  body.land637 #screen-hq .hq556-go,body.land637 #screen-hq .hq556-gos{flex:0 0 220px;width:220px}
+  body.land637 #screen-hq .hq556-go,body.land637 #screen-hq .hq556-gos .hq556-go{height:64px;gap:4px}
+  body.land637 #screen-hq .hq556-gos{gap:6px}
+  body.land637 #screen-hq .hq556-gos .hq556-go{height:48px}
+  body.land637 #screen-hq .hq556-redo{height:36px}
+  body.land637 #screen-hq .hq556-go b{font-size:33px}
+  body.land637 #screen-hq .hq556-go span{font-size:14px}
+  body.land637 #screen-hq .hq556-grid{grid-auto-rows:minmax(0,1fr);gap:8px}
+  body.land637 #screen-hq .hq556-tile{padding:8px 12px;gap:0 12px}
+  body.land637 #screen-hq .hq556-tile:hover{padding:7px 11px}
+  body.land637 #screen-hq .hq556-ic{width:72px;height:72px}
+  body.land637 #screen-hq .hq556-ic img{width:64px;height:64px}
+  body.land637 #screen-hq .hq556-txt{gap:4px}
+  body.land637 #screen-hq .hq556-name{font-size:22px}
+  body.land637 #screen-hq .hq556-num b{font-size:22px}
+  body.land637 #screen-hq .hq556-num small{font-size:14px}
+  body.land637 #screen-hq .hq556-bar{height:8px;border-width:1px}
+  /* ---- 简单 / 困难「选下一步」那一屏（节点卡）：抬头那块牌子不要；卡压矮 —— 图标 48（12px 原图 4 倍）、名字 22、说明和得 / 代价 14 ---- */
+  body.land637 #runContent .rpg-command-window{padding:6px 8px 8px!important}
+  body.land637 #runContent .rpg-command-window>.section-title{display:none!important}
+  body.land637 #runContent .node-grid{gap:10px!important;margin:0!important}
+  body.land637 #runContent .node{min-height:0!important;padding:10px 14px!important;gap:8px!important}
+  body.land637 #runContent .n575-top{gap:12px}
+  body.land637 #runContent .n575-tile{flex:0 0 64px;width:64px;height:64px}
+  body.land637 #runContent .n575-tile img{width:48px;height:48px}
+  body.land637 #runContent .node .node-body{gap:4px}
+  body.land637 #runContent .n575-name{font-size:22px}
+  body.land637 #runContent .n575-line{font-size:14px;line-height:1.3}
+  body.land637 #runContent .n575-tags{gap:4px;font-size:14px}
+  body.land637 #runContent .n575-row>i{flex-basis:32px}
+  body.land637 #runContent .n575-row b{padding:1px 8px;border-width:1px}
+  body.land637 #runContent .n575-go{height:40px;padding:0 18px;font-size:18px}
+  `;
+  document.head.appendChild(st);
+  apply();
+  try{matchMedia('(orientation: landscape)').addEventListener('change',apply)}catch(e){}
+  addEventListener('resize',apply);
+})();
+</script>
