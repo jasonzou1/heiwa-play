@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="和平物语" />
-<title>和平物语 拯救世界的冒险谭 Demo v0.1.637</title>
+<title>和平物语 拯救世界的冒险谭 Demo v0.1.638</title>
 <style>
 
   *{box-sizing:border-box}
@@ -3461,7 +3461,7 @@
 <body>
 <div class="app">
   <div class="topbar">
-    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.637</div></div>
+    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.638</div></div>
     <div class="resources" id="topResources"></div>
   </div>
 
@@ -3479,7 +3479,7 @@
         <div class="title-logo-wrap">
           <div class="title-kicker">HEIWA MONOGATARI</div>
           <h1 class="game-title"><span>和平物语</span><small>拯救世界的冒险谭</small></h1>
-          <div class="title-version">Demo v0.1.637</div>
+          <div class="title-version">Demo v0.1.638</div>
         </div>
         <div class="title-controls">
           <div id="titleMenu" class="title-menu"></div>
@@ -45347,6 +45347,97 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   body.land637 #runContent .n575-row>i{flex-basis:32px}
   body.land637 #runContent .n575-row b{padding:1px 8px;border-width:1px}
   body.land637 #runContent .n575-go{height:40px;padding:0 18px;font-size:18px}
+  /* ---- 战斗（v0.1.638）：两栏 —— 左边战场（敌人一排在上、我方一排在下），右边一栏 240 宽（提示 / 全队效果 / 战斗 · 道具 / 战斗记录）。
+     和电脑 ≥1100 宽时那两栏是同一个结构（.combat-shell 的 grid-area），只是右栏窄、卡片压矮。 ---- */
+  body.land637 #screen-combat .combat-shell{display:grid!important;grid-template-columns:minmax(0,1fr) 240px;
+    grid-template-areas:"head head" "stage dock";align-items:start;gap:4px 6px!important;padding-bottom:0!important;min-height:0!important}
+  body.land637 #screen-combat .combat-shell>.rf570-wrap{grid-area:head}
+  body.land637 #screen-combat .rpg-battle-stage{grid-area:stage;margin:0!important;padding:4px 6px!important;gap:4px!important;min-width:0}
+  body.land637 #screen-combat #combatContent .combat-action-dock{grid-area:dock;position:static!important;margin:0!important;transform:none!important;
+    width:auto!important;max-width:none!important;max-height:calc(100dvh - 60px);overflow-y:auto;overflow-x:hidden;padding:4px!important;gap:4px!important}
+  body.land637 #screen-combat .combat-zone{padding:0!important;margin:0!important;gap:2px!important}
+  /* 「敌方 / 我方」那两行抬头不要（卡的颜色已经分得开）；战斗里用不上团队经验，顶栏那一格让给标题和回合数 */
+  body.land637 #screen-combat .combat-zone-head{display:none!important}
+  body.land637 #combatContent .rf570 .pg559-chip:not(:has(svg,img,.rf570-cz)){display:none}
+  body.land637 #screen-combat .combat-unit-grid{gap:6px!important}
+  /* 敌人卡：立绘缩到 64 高（敌人图是缩小，不怕糊），字小一号 */
+  body.land637 #screen-combat #combatContent .combat-unit.enemy-card{padding:4px 6px!important;min-height:0!important}
+  body.land637 #screen-combat #combatContent .enemy-card .unit-head{gap:6px!important;min-height:0!important}
+  body.land637 #screen-combat #combatContent .enemy-combat-portrait{flex:0 0 56px!important;width:56px!important;height:64px!important;min-height:0!important}
+  body.land637 #screen-combat #combatContent .enemy-card .unit-copy{gap:2px!important;font-size:12px!important}
+  /* 我方卡：立绘 1 倍（56×70 的像素图只许整数倍）和格挡钮（40 高）并排，名字 / 血条 / 血量 / 状态在下面 —— 比竖排省 30px，状态多出一行也放得下 */
+  body.land637 #screen-combat #combatContent .combat-unit.ally-card{padding:4px!important;min-height:0!important}
+  body.land637 #screen-combat #combatContent .ally-card .unit-head{display:grid!important;grid-template-columns:56px minmax(0,1fr);
+    grid-template-areas:"pic guard" "copy copy";align-items:center;gap:2px 6px!important;min-height:0!important}
+  body.land637 #screen-combat #combatContent .ally-card .combat-portrait{grid-area:pic}
+  body.land637 #screen-combat #combatContent .ally-card .guard-line{grid-area:guard}
+  body.land637 #screen-combat #combatContent .ally-card .unit-copy{grid-area:copy}
+  body.land637 #screen-combat #combatContent .ally-card .combat-portrait{width:56px!important;height:56px!important;min-height:0!important}
+  body.land637 #screen-combat #combatContent .ally-card .combat-portrait img{width:56px!important;height:70px!important;transform:none!important}
+  body.land637 #screen-combat #combatContent .ally-card .guard-line{height:auto!important;min-height:0!important;width:100%!important}
+  body.land637 #screen-combat #combatContent .ally-card .guard-btn{min-height:0!important;height:40px!important;width:100%!important;padding:0 4px!important;font-size:14px!important}
+  body.land637 #screen-combat #combatContent .ally-card .unit-copy{gap:2px!important}
+  /* 名字比等级要紧：等级收到 12，名字 18 */
+  body.land637 #screen-combat #combatContent .ally-card .unit-name-row b{font-size:18px!important}
+  body.land637 #screen-combat #combatContent .ally-card .unit-name-row span{font-size:12px!important}
+  body.land637 #screen-combat #combatContent .ally-card .unit-value-row{font-size:12px!important;min-height:0!important}
+  body.land637 #screen-combat #combatContent .ally-card .unit-value-row span{font-size:12px!important}
+  body.land637 #screen-combat #combatContent .enemy-card .unit-name-row b{font-size:18px!important}
+  body.land637 #screen-combat #combatContent .enemy-card .unit-name-row span{font-size:12px!important}
+  body.land637 #screen-combat #combatContent .enemy-card .unit-value-row{min-height:0!important;gap:2px!important}
+  body.land637 #screen-combat #combatContent .enemy-card .unit-value-row::before{font-size:11px!important;margin:0!important}
+  body.land637 #screen-combat #combatContent .enemy-card .unit-intent{min-height:0!important;padding:1px 6px!important;font-size:13px!important;line-height:1.3!important}
+  /* 右栏：提示句两行内、两颗大钮矮一点 */
+  body.land637 #screen-combat #combatContent .combat-action-dock .ac591-head{padding:6px 10px!important;font-size:16px!important;line-height:1.25!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .ac591-head *{font-size:16px!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock>.notice{padding:4px 8px!important;font-size:12px!important;margin:0!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .cmd608{gap:6px!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .c608-b{height:96px!important;min-height:0!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .c608-b b{font-size:22px!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .combat-log-details{margin:0!important}
+  /* 状态一行：多了就截在一行里（点卡看「状态一览」），不让卡变高 */
+  body.land637 #screen-combat #combatContent .combat-unit .status-list{max-height:18px!important;margin-top:2px!important;gap:2px!important;overflow:hidden!important;flex-wrap:wrap}
+  body.land637 #screen-combat #combatContent .combat-unit .status-list .status{font-size:11px!important;padding:0 4px!important;line-height:16px!important}
+  /* 敌人多的时候（紧凑卡）名字一行，挤不下省略号 */
+  body.land637 #screen-combat #combatContent .enemy-card .unit-name-row{flex-wrap:nowrap!important;min-width:0}
+  body.land637 #screen-combat #combatContent .enemy-card .unit-name-row b{min-width:0;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  body.land637 #screen-combat #combatContent .enemy-grid:not(.flank-pair) .unit-name-row b{font-size:14px!important}
+  /* 「战斗」二级菜单：一人一行压矮 —— 头像 32、名字 16、范围牌 12，说明照旧折着（点「展开技能说明」看） */
+  body.land637 #screen-combat #combatContent .combat-action-dock .sub608{gap:6px!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .b608{min-height:36px!important;padding:0 8px!important;font-size:14px!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .sub608>b{font-size:18px!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .skill-btn{min-height:0!important;padding:4px 6px!important;gap:6px!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .ac591-pic{width:32px!important;height:32px!important;flex-basis:32px!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .ac591-pic img{margin:-2px 0 0 -12px!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .skill-btn h4{font-size:16px!important;line-height:1.2!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .skill-btn h4 small{font-size:12px!important}
+  body.land637 #screen-combat #combatContent .combat-action-dock .ac591-tag{font-size:12px!important;padding:1px 6px!important}
+  /* 局终两屏（全灭画在战斗屏、通关画在跑局屏，同一套 .end623-*）：电脑那一档是 2 倍立绘 + 300 宽右栏，一行 1170 宽；这里立绘 1 倍、右栏 200、字小一档 */
+  body.land637 :is(#runContent,#combatContent) .end623{gap:5px;padding:6px 12px;font-size:15px}
+  body.land637 :is(#runContent,#combatContent) .end623-head{gap:2px 12px}
+  body.land637 :is(#runContent,#combatContent) .end623-t{font-size:24px}
+  body.land637 :is(#runContent,#combatContent) .end623-mid{gap:10px}
+  body.land637 :is(#runContent,#combatContent) .end623-team{gap:8px}
+  body.land637 :is(#runContent,#combatContent) .end623-m{gap:3px}
+  body.land637 :is(#runContent,#combatContent) .end623-face{width:72px;height:72px}
+  body.land637 :is(#runContent,#combatContent) .end623-face img{width:56px;height:70px}
+  body.land637 :is(#runContent,#combatContent) .end623-mn{font-size:16px}
+  body.land637 :is(#runContent,#combatContent) :is(.end623-down,.end623-up){font-size:12px}
+  body.land637 :is(#runContent,#combatContent) .end623-side{flex:0 0 200px;width:200px;gap:6px}
+  body.land637 :is(#runContent,#combatContent) .end623-foes{gap:4px;padding:6px}
+  body.land637 :is(#runContent,#combatContent) .end623-ff{max-width:84px;max-height:70px}
+  body.land637 :is(#runContent,#combatContent) .end623-ff img.s{zoom:1}
+  body.land637 :is(#runContent,#combatContent) .end623-fn{font-size:15px}
+  body.land637 :is(#runContent,#combatContent) .end623-coin{gap:8px;padding:6px 10px}
+  body.land637 :is(#runContent,#combatContent) .end623-coin>svg{width:28px;height:28px}
+  body.land637 :is(#runContent,#combatContent) .end623-cn{font-size:26px}
+  body.land637 :is(#runContent,#combatContent) .end623-stats{gap:6px}
+  body.land637 :is(#runContent,#combatContent) .end623-tile{gap:1px;padding:3px 8px}
+  body.land637 :is(#runContent,#combatContent) .end623-tile>small{font-size:12px;line-height:1.05}
+  body.land637 :is(#runContent,#combatContent) .end623-tile>span{font-size:20px}
+  body.land637 :is(#runContent,#combatContent) .end623-note{font-size:13px}
+  body.land637 :is(#runContent,#combatContent) .end623-row{margin:0!important;gap:10px}
+  body.land637 :is(#runContent,#combatContent) .btn:is(.end623-back,.end623-go){height:44px!important;min-height:0!important;padding:0 16px!important;font-size:18px!important}
   `;
   document.head.appendChild(st);
   apply();
