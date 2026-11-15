@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="和平物语" />
-<title>和平物语 拯救世界的冒险谭 Demo v0.1.638</title>
+<title>和平物语 拯救世界的冒险谭 Demo v0.1.639</title>
 <style>
 
   *{box-sizing:border-box}
@@ -3461,7 +3461,7 @@
 <body>
 <div class="app">
   <div class="topbar">
-    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.638</div></div>
+    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.639</div></div>
     <div class="resources" id="topResources"></div>
   </div>
 
@@ -3479,7 +3479,7 @@
         <div class="title-logo-wrap">
           <div class="title-kicker">HEIWA MONOGATARI</div>
           <h1 class="game-title"><span>和平物语</span><small>拯救世界的冒险谭</small></h1>
-          <div class="title-version">Demo v0.1.638</div>
+          <div class="title-version">Demo v0.1.639</div>
         </div>
         <div class="title-controls">
           <div id="titleMenu" class="title-menu"></div>
@@ -39942,8 +39942,13 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   if(typeof UI==='undefined')return;
   const SEL='.mini-safe-grid142,.mini-odd-grid142';
   const 上限=520, 下限=260;
+  /* 手机横屏那一档（body.land637）整屏只有 390 高，节点窗封了顶、在窗里滚：
+     底边量到窗的下沿（不是视口），下限放到 200 —— 4×4 每格 45、5×5 每格 35；
+     还按 260 的话安全格那一盘最后一排落在窗外，2 秒的预览滚不过去 */
+  const 横屏下限=200;
 
   function fit(){
+    const 横=document.body.classList.contains('land637');
     for(const g of document.querySelectorAll(SEL)){
       g.style.maxWidth='';                       // 先还原，免得越量越小
       const r=g.getBoundingClientRect();
@@ -39951,8 +39956,10 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
       // 网格下面还有一行「进度 n/m」/「选错即失败。」，给它留出实际高度
       const 尾=g.parentElement?.querySelector('.mini-attempt142');
       const 尾高=尾?Math.ceil(尾.getBoundingClientRect().height)+10:0;
-      const 可用=Math.floor(innerHeight-r.top-尾高-12);
-      const 目标=Math.max(下限,Math.min(上限,可用));
+      const 窗=横?g.closest('.run-view'):null;
+      const 底=窗?窗.getBoundingClientRect().bottom-10:innerHeight-12;
+      const 可用=Math.floor(底-r.top-尾高);
+      const 目标=Math.max(横?横屏下限:下限,Math.min(上限,可用));
       if(目标<上限)g.style.maxWidth=目标+'px';
     }
   }
@@ -45438,6 +45445,398 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   body.land637 :is(#runContent,#combatContent) .end623-note{font-size:13px}
   body.land637 :is(#runContent,#combatContent) .end623-row{margin:0!important;gap:10px}
   body.land637 :is(#runContent,#combatContent) .btn:is(.end623-back,.end623-go){height:44px!important;min-height:0!important;padding:0 16px!important;font-size:18px!important}
+  /* ---- 节点屏 ----
+     商店 / 实验室 / 以物换物整张窗按视口封顶、里面那一格自己滚：电脑那一档窗上面那一段（顶栏 + 壳的留白）是 162px，常数写的 166；
+     这一档顶栏 40 + 留白，窗从 52 开始 —— 照搬 166 的话窗只剩 230 高，赐福卡整排被压在窗底下 */
+  body.land637 #runContent :is(.lab588,.bt589),body.land637 #runContent .run-view.sh578{max-height:calc(100dvh - 60px)}
+  /* 兜底：每一屏节点窗都按同一个常数封顶、在窗里滚，整页不动（顶栏一直在）；窗底那一行（主钮所在）钉在窗底，滚到哪儿都点得到。
+     下面各屏再各自压矮，常见的情况一屏放下、用不着滚 */
+  body.land637 #runContent .rpg-run-shell>.run-view{max-height:calc(100dvh - 60px);overflow-y:auto;overflow-x:hidden;box-sizing:border-box}
+  body.land637 #runContent .rpg-run-shell>.run-view>:is(.rec576-foot,.tr577-foot,.rs582-foot,.st586-foot,.wh586-foot,.mn587-foot,.bc588-foot,.nd612-foot,.wg613-foot,.fl618-foot){
+    position:sticky;bottom:0;z-index:3;background:#fffef9}
+  /* 所有节点窗共用：内距、抬头（标题牌 + 一句说明并成一行）、抬头下面那道虚线的留白都压一档 */
+  body.land637 #runContent .rpg-run-shell>.run-view{padding:8px 12px!important}
+  body.land637 #runContent .run-view-head{margin:0 0 6px!important;padding:0 0 6px!important;min-height:0!important}
+  body.land637 #runContent .run-view-head>div{flex-direction:row;align-items:center;flex-wrap:wrap;gap:4px 12px}
+  body.land637 #runContent .run-view-head h2{font-size:18px!important;padding:2px 10px!important;align-self:center}
+  body.land637 #runContent .run-view-head p{font-size:14px;line-height:1.3}
+  /* 窗封了顶之后，竖排的窗会先去压扁里面的块（抬头被压到 8px、标题牌顶出窗外被切掉）—— 这一档里一律不压，放不下就在窗里滚。
+     赐福那一格（实验室 / 以物换物）是有意让它缩、自己滚的，除外 */
+  body.land637 #runContent .rpg-run-shell>.run-view>:not(.bc588-grid){flex-shrink:0}
+  /* 招募：两张卡并排压到 140 高 —— 立绘 1 倍、技能一行（说明截在这一行里，「完整说明」看全文）；下面的队伍一排不画立绘 */
+  body.land637 #runContent .rec576{gap:4px}
+  body.land637 #runContent .rec576-cap{font-size:14px;padding:2px 8px}
+  body.land637 #runContent .rec576-grid{gap:8px}
+  body.land637 #runContent .rec576-card{padding:6px;gap:10px}
+  body.land637 #runContent .rec576-art{flex:0 0 64px;width:64px}
+  body.land637 #runContent .rec576-art img{transform:none}
+  body.land637 #runContent .rec576-badge{left:4px;top:4px;font-size:12px;padding:1px 6px}
+  body.land637 #runContent .rec576-txt{gap:4px}
+  body.land637 #runContent .rec576-nm{gap:4px 6px;flex-wrap:nowrap}
+  body.land637 #runContent .rec576-nm>b{font-size:20px;white-space:nowrap}
+  body.land637 #runContent .rec576-role{font-size:13px;padding:1px 6px}
+  body.land637 #runContent .rec576-more{height:24px;font-size:13px}
+  body.land637 #runContent .rec576-sk{flex-wrap:nowrap;align-items:center;gap:6px;padding:2px 8px}
+  body.land637 #runContent .rec576-sk>b{flex:none;font-size:16px;white-space:nowrap}
+  body.land637 #runContent .rec576-sk>p{flex:1;min-width:0;margin:0;display:block!important;-webkit-line-clamp:unset!important;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+  body.land637 #runContent .rec576-k{font-size:12px;padding:1px 6px}
+  body.land637 #runContent .rec576-bond{padding:2px 8px;gap:6px;font-size:13px}
+  body.land637 #runContent .rec576-team{gap:4px}
+  body.land637 #runContent .rec576-step{min-height:0;font-size:13px;gap:10px}
+  body.land637 #runContent .rec576-step .hot{padding:1px 8px}
+  body.land637 #runContent .rec576-row{gap:8px}
+  body.land637 #runContent :is(.rec576-m,.rec576-m.empty){min-height:32px;padding:2px 8px}
+  body.land637 #runContent .rec576-mt{flex-direction:row;align-items:baseline;flex-wrap:wrap;gap:0 8px}
+  body.land637 #runContent .rec576-mn>b{font-size:18px}
+  body.land637 #runContent .rec576-mf{display:none}
+  body.land637 #runContent .rec576-mt small{font-size:12px}
+  body.land637 #runContent .rec576-foot{gap:10px}
+  body.land637 #runContent .rec576-skip{height:36px;font-size:14px}
+  body.land637 #runContent .btn.rec576-go{height:44px;padding:0 18px;font-size:18px}
+  /* 训练：左名单 200 宽（立绘窗 34×40、1 倍露头，四个人一列放得下）；右边立绘 1 倍、名字和路线一行、六格属性一行；两张技能卡说明收两行、下一级一行 */
+  body.land637 #runContent .tr577{gap:4px}
+  body.land637 #runContent .tr577-body{gap:10px}
+  body.land637 #runContent .tr577-list{flex:0 0 200px;width:200px;gap:6px}
+  body.land637 #runContent .tr577-m{padding:3px 6px;gap:8px}
+  body.land637 #runContent .tr577-m.on{padding:2px 5px}
+  body.land637 #runContent .tr577-mf{flex:0 0 34px;width:34px;height:40px}
+  body.land637 #runContent .tr577-mf img{margin-top:-10px}
+  body.land637 #runContent .tr577-mt{gap:2px}
+  body.land637 #runContent .tr577-mn{flex-wrap:wrap;gap:0 6px}
+  body.land637 #runContent .tr577-mn>b{font-size:18px;flex:none;overflow:visible}
+  body.land637 #runContent .tr577-pips{display:none}
+  body.land637 #runContent .tr577-mt small{font-size:12px}
+  body.land637 #runContent .tr577-main{gap:6px}
+  body.land637 #runContent .tr577-top{gap:10px}
+  body.land637 #runContent .tr577-art{flex:0 0 64px;width:64px;height:80px}
+  body.land637 #runContent .tr577-art img{transform:none}
+  body.land637 #runContent .tr577-id{gap:6px}
+  body.land637 #runContent .tr577-ih{gap:8px;flex-wrap:nowrap;min-width:0}
+  body.land637 #runContent .tr577-ih>b{font-size:24px;white-space:nowrap}
+  body.land637 #runContent .tr577-ih>span{font-size:16px;white-space:nowrap}
+  body.land637 #runContent .tr577-rc{font-size:13px;white-space:nowrap}
+  body.land637 #runContent .tr577-stats{gap:4px}
+  body.land637 #runContent .tr577-stat{height:auto;min-height:0;padding:2px 4px}
+  body.land637 #runContent .tr577-stat small{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  body.land637 #runContent .tr577-stat>span{gap:3px}
+  body.land637 #runContent .tr577-stat b{font-size:15px}
+  body.land637 #runContent .tr577-stat i{font-size:11px}
+  body.land637 #runContent .tr577-cards{gap:8px}
+  body.land637 #runContent .tr577-sk{padding:6px 8px;gap:3px}
+  body.land637 #runContent .tr577-sh{gap:6px}
+  body.land637 #runContent .tr577-sh>b{font-size:18px}
+  body.land637 #runContent .tr577-k{font-size:12px;padding:1px 6px}
+  body.land637 #runContent .tr577-sk p{font-size:13px;line-height:1.35}
+  body.land637 #runContent .tr577-sk p.clamp{-webkit-line-clamp:2}
+  body.land637 #runContent .tr577-sk p.tr577-next{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden}
+  body.land637 #runContent .tr577-more{height:24px;font-size:13px}
+  body.land637 #runContent .tr577-foot{padding-top:0}
+  body.land637 #runContent .btn.tr577-go{height:40px;padding:0 14px;font-size:16px}
+  /* 商店：电脑那一档右栏 440、卡 132 高（立绘 2 倍），860 宽里卡的字那一栏只剩 22px。
+     这里右栏 300、货架两列一件一行（立绘 1 倍、露头的 56 窗，名字 + 牌子 + 价钱），服务和投资各压成一行 */
+  body.land637 #runContent .run-view.sh578{grid-template-columns:minmax(0,1fr) 300px;gap:6px 10px}
+  body.land637 #runContent .run-view.sh578>.shop448-tabs .shop448-tab{height:32px!important;min-height:0!important;font-size:15px!important}
+  /* 货架那一格是定高的格子：auto 行会把 overflow:hidden 的卡压扁（量出来 23px 一张），行高按内容排，多了在框里滚 */
+  body.land637 #runContent .run-view.sh578>.shop-grid{gap:6px!important;min-height:0;grid-auto-rows:max-content}
+  body.land637 #runContent .sh578-card{height:auto;min-height:0;grid-template-columns:56px minmax(0,1fr) auto;grid-template-rows:auto auto;
+    grid-template-areas:"art rb price" "art name price";gap:2px 8px;padding:5px!important}
+  body.land637 #runContent .sh578-card.on{padding:4px!important}
+  body.land637 #runContent .sh578-art{width:56px;height:56px;align-self:center;place-items:start center}
+  body.land637 #runContent .sh578-art .sh578-pic{transform:none;align-self:start;margin-top:-4px}
+  body.land637 #runContent .sh578-art .sh578-ic{width:48px;height:48px}
+  body.land637 #runContent .sh578-glyph{font-size:28px}
+  body.land637 #runContent .sh578-rb{font-size:12px;padding:1px 6px;align-self:end}
+  body.land637 #runContent .sh578-card>b{font-size:18px;align-self:start}
+  body.land637 #runContent .sh578-card>p{display:none}
+  body.land637 #runContent .sh578-card>.price{align-self:center;font-size:18px}
+  body.land637 #runContent .sh578-card>.price small{display:none}
+  body.land637 #runContent .sh578-side{padding:8px 10px;gap:6px}
+  body.land637 #runContent .sh578-dh{gap:6px}
+  body.land637 #runContent .sh578-dh b{font-size:22px}
+  body.land637 #runContent .sh578-dmain{gap:10px}
+  body.land637 #runContent .sh578-dart{flex:0 0 64px;width:64px;height:64px}
+  body.land637 #runContent .sh578-dart .sh578-glyph.big{font-size:40px}
+  body.land637 #runContent .sh578-dtext{font-size:13px;line-height:1.4}
+  body.land637 #runContent .sh578-foot{padding-top:6px;gap:8px}
+  body.land637 #runContent .sh578-dprice b{font-size:24px}
+  body.land637 #runContent .sh578-dprice small{font-size:12px}
+  body.land637 #runContent .btn.sh578-go{height:44px;padding:0 16px;font-size:18px}
+  body.land637 #runContent .run-view.sh578 .shop448-pane{gap:2px 8px}
+  body.land637 #runContent .run-view.sh578 .shop448-pane small{font-size:12px;-webkit-line-clamp:1}
+  body.land637 #runContent .run-view.sh578 .shop448-pane .btn{min-height:0!important;height:32px!important;font-size:14px!important;padding:0 8px!important}
+  body.land637 #runContent .run-view.sh578>.invest286{padding:4px 8px;gap:4px 10px}
+  body.land637 #runContent .run-view.sh578>.invest286>.section-title{font-size:16px}
+  body.land637 #runContent .run-view.sh578>.invest286>.notice{font-size:12px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+  body.land637 #runContent .run-view.sh578>.invest286 .btn{min-height:0!important;height:32px!important;font-size:14px!important;padding:0 10px!important}
+  /* 铁匠铺那一页：窗是定高的（两列靠它一路把高度传下去），电脑那一档写的是 calc(100vh - 166px) —— 这一档只剩 224，换成这一档的常数。
+     左边名单 400 → 260；右栏竖着排（武器 / 刃纹槽 / 三个页签 / 面板）要 370 高，这一档只有 214 —— 右栏再拆成两列：
+     左边武器和刃纹槽，右边页签和面板（面板自己滚，主钮钉在面板底），选哪一条和按哪颗钮都不用翻 */
+  body.land637 #runContent .run-view.sh578.sh578-forge{height:calc(100dvh - 60px)}
+  body.land637 #runContent .fg579{grid-template-columns:260px minmax(0,1fr);gap:10px}
+  body.land637 #runContent .fg579-side{display:grid;grid-template-columns:minmax(0,1fr) 230px;grid-template-rows:auto minmax(0,1fr);gap:6px 10px}
+  body.land637 #runContent .fg579-side>.fg579-top{grid-row:1/3;grid-column:1;overflow-y:auto;gap:4px}
+  body.land637 #runContent .fg579-side>.fg579-tabs{grid-row:1;grid-column:2;gap:4px}
+  body.land637 #runContent .fg579-side>.fg579-panel{grid-row:2;grid-column:2;min-height:0;overflow-y:auto}
+  body.land637 #runContent .fg579-dh{gap:8px}
+  body.land637 #runContent .fg579-dh b{font-size:22px}
+  body.land637 #runContent .fg579-who{font-size:13px}
+  body.land637 #runContent .fg579-stat{font-size:13px;padding:1px 6px}
+  body.land637 #runContent .fg579-eh b{font-size:16px}
+  body.land637 #runContent .fg579-eh small{font-size:12px}
+  body.land637 #runContent .fg579-slots{gap:4px}
+  body.land637 #runContent .fg579-slot{grid-template-columns:minmax(0,1fr) 44px;gap:2px 8px;min-height:32px;padding:3px 8px!important}
+  body.land637 #runContent .fg579-slot>.fg579-ed{grid-column:1/-1}
+  body.land637 #runContent .fg579-slot.empty{min-height:24px}
+  body.land637 #runContent .fg579-en{font-size:16px}
+  body.land637 #runContent .fg579-pips i{width:10px;height:10px}
+  body.land637 #runContent .fg579-ed{font-size:12px}
+  body.land637 #runContent .fg579-tab{min-height:36px;font-size:16px;padding:0 4px!important}
+  body.land637 #runContent .fg579-panel{padding:6px 8px;gap:4px}
+  body.land637 #runContent .fg579-panel p{font-size:13px;line-height:1.4}
+  body.land637 #runContent .fg579-opt{min-height:36px;font-size:13px}
+  body.land637 #runContent .fg579-foot{position:sticky;bottom:0}
+  body.land637 #runContent .btn.fg579-go{height:40px;padding:0 14px;font-size:16px}
+  /* 获得武器（宝箱 / Boss 掉落）：武器一行压到 56；每人一栏立绘 1 倍（40×46 的窗露头，同休息屏），差值字小一号，钮 36 */
+  body.land637 #runContent .wg613{gap:6px}
+  body.land637 #runContent .wg613-w{gap:12px;padding:4px 10px}
+  body.land637 #runContent .wg613-ic{width:48px;height:48px;flex:0 0 48px;font-size:28px}
+  body.land637 #runContent .wg613-wn{min-width:150px;max-width:260px;gap:4px}
+  body.land637 #runContent .wg613-wn>b{font-size:22px}
+  body.land637 #runContent .wg613-base{font-size:13px;padding:0 6px}
+  body.land637 #runContent .wg613-es{gap:2px;font-size:13px;line-height:1.3}
+  body.land637 #runContent .wg613-es>li>b{font-size:16px}
+  body.land637 #runContent .wg613-team{gap:8px}
+  body.land637 #runContent .wg613-m{padding:6px;gap:6px}
+  body.land637 #runContent .wg613-mh{gap:8px}
+  body.land637 #runContent .wg613-face{width:40px;height:46px;flex:0 0 40px}
+  body.land637 #runContent .wg613-face img{width:56px;height:70px;margin-top:-10px}
+  body.land637 #runContent .wg613-mt{gap:3px}
+  body.land637 #runContent .wg613-mt>b{font-size:18px}
+  body.land637 #runContent .wg613-mt>small,body.land637 #runContent .wg613-kind{font-size:12px}
+  body.land637 #runContent .wg613-tab{min-height:32px;font-size:13px!important}
+  body.land637 #runContent .wg613-o{gap:4px}
+  body.land637 #runContent .wg613-o+.wg613-o{padding-top:4px}
+  body.land637 #runContent .wg613-sl{font-size:13px}
+  body.land637 #runContent .wg613-rs{gap:2px}
+  body.land637 #runContent .wg613-r{font-size:13px;line-height:1.25}
+  body.land637 #runContent .wg613-r>i{width:28px;flex-basis:28px}
+  body.land637 #runContent .wg613-r>b{font-size:16px}
+  /* 刃纹那一行「旧 → 新」收两行（新那几条的全文在上面武器那一行里） */
+  body.land637 #runContent .wg613-r.ed>span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+  body.land637 #runContent .wg613-go{min-height:36px;padding:2px 8px!important;font-size:14px!important}
+  /* 窗底那一行只有「收进行囊 / 拆解」两颗次要钮：钉在窗底会盖住每人那一栏的「装备给…」。挪到抬头那一行的右边（抬头只有标题牌和一句话，右边空着），
+     和别的节点屏「离开」的位置一样 */
+  body.land637 #runContent .rpg-run-shell>.run-view.wg613{position:relative}
+  body.land637 #runContent .rpg-run-shell>.run-view.wg613>.wg613-foot{position:absolute;top:6px;right:12px;bottom:auto;gap:8px;background:none}
+  body.land637 #runContent .wg613-foot>.wg613-gap{display:none}
+  body.land637 #runContent .btn:is(.wg613-stash,.wg613-scrap){height:36px;padding:0 12px;font-size:15px}
+  /* 随机事件：图 12×12 原图 12 倍（144，窗 160）；名字 28、选项 40 高；结果那一块和主钮压一档 */
+  body.land637 #runContent .ev584{gap:6px}
+  body.land637 #runContent .ev584-mid{gap:14px}
+  body.land637 #runContent .ev584-art{flex:0 0 160px;width:160px;height:160px}
+  body.land637 #runContent .ev584-art img{width:144px;height:144px}
+  body.land637 #runContent .ev584-t{gap:6px;padding-top:0}
+  body.land637 #runContent .ev584-name{font-size:28px}
+  body.land637 #runContent .ev584-text{font-size:14px;line-height:1.35}
+  body.land637 #runContent .ev584-opts{gap:6px;margin-top:2px}
+  body.land637 #runContent .ev584-opt{min-height:40px;padding:4px 12px!important;gap:8px}
+  body.land637 #runContent .ev584-opt b{font-size:18px}
+  body.land637 #runContent :is(.ev584-who,.ev584-cost){font-size:13px;padding:1px 6px}
+  body.land637 #runContent .ev584-res{margin-top:2px;padding:8px 10px;gap:8px}
+  body.land637 #runContent .ev584-rt{font-size:18px}
+  body.land637 #runContent .btn.ev584-go{height:44px;padding:0 18px;font-size:18px}
+  /* 小游戏（五种）：玩的那一块 380 宽、钮 40~44 高；格子类（找不同 / 安全格）多宽由 v0.1.421 那一块量着窗底定（格子是正方的，宽就是高） */
+  body.land637 #runContent .mn587{gap:6px}
+  body.land637 #runContent .mn587-head{min-height:0}
+  body.land637 #runContent .mn587-name{font-size:24px}
+  body.land637 #runContent .mn587-left{font-size:13px;padding:1px 8px}
+  body.land637 #runContent .mn587-body{gap:16px}
+  body.land637 #runContent .mn587-play{flex:0 0 380px;width:380px;gap:8px}
+  body.land637 #runContent .mn587-side{gap:6px}
+  body.land637 #runContent .mn587-rule{font-size:13px;line-height:1.35}
+  body.land637 #runContent .mn587-hint{font-size:18px}
+  body.land637 #runContent .mn587-range{font-size:13px}
+  body.land637 #runContent .mn587-pay{padding:6px 8px;gap:4px;font-size:13px}
+  body.land637 #runContent .mn587-legend{gap:4px 10px;font-size:13px}
+  body.land637 #runContent .mn587-nums{gap:6px}
+  body.land637 #runContent .mn587 .mn587-num{height:44px;min-height:0}
+  body.land637 #runContent .mn587-code{gap:8px}
+  body.land637 #runContent .mn587-slots{gap:8px}
+  body.land637 #runContent .mn587-slot{height:48px;font-size:28px}
+  body.land637 #runContent .mn587-keys{gap:6px}
+  body.land637 #runContent .mn587 .mn587-key{height:40px;min-height:0}
+  body.land637 #runContent .mn587.done .mn587-keys{display:none}
+  body.land637 #runContent .mn587-hist{gap:4px 16px}
+  body.land637 #runContent .mn587-hn{display:none}
+  body.land637 #runContent .mn587-tile{width:28px;height:28px;font-size:16px}
+  body.land637 #runContent .mn587-cal{gap:8px}
+  body.land637 #runContent .mn587-bar{height:48px}
+  body.land637 #runContent .mn587-grid{gap:6px}
+  body.land637 #runContent .mn587 :is(.mini-odd-cell142,.mini-safe-cell142){min-height:0}
+  body.land637 #runContent .mn587-note{padding:4px 8px;font-size:13px}
+  body.land637 #runContent .mn587-foot{gap:10px}
+  body.land637 #runContent .mn587-res b{font-size:18px}
+  body.land637 #runContent .mn587-res span{font-size:13px}
+  body.land637 #runContent .btn.mn587-go{height:44px;padding:0 18px;font-size:18px}
+  /* 实验室 / 以物换物：赐福卡（两屏共用）字小一档、说明两行；实验室三种用法的卡压矮，交换台的格子 48 高。
+     赐福那一格照旧是窗里唯一会缩的那一块，多了在框里滚 */
+  body.land637 #runContent :is(.lab588,.bt589){gap:6px}
+  body.land637 #runContent .bc588-grid{gap:8px}
+  body.land637 #runContent .bc588-band{padding:2px 8px;font-size:15px;gap:6px}
+  body.land637 #runContent .bc588-ct{padding:4px 8px 6px;gap:2px}
+  body.land637 #runContent .bc588-cn b{font-size:17px}
+  body.land637 #runContent .bc588-n{font-size:14px}
+  body.land637 #runContent .bc588-tag{font-size:12px;padding:0 6px}
+  body.land637 #runContent .bc588-cd{font-size:12px;line-height:1.35;-webkit-line-clamp:2}
+  body.land637 #runContent .bc588-foot{gap:10px}
+  body.land637 #runContent .bc588-leave{height:36px;min-height:36px;font-size:15px}
+  body.land637 #runContent .lab588-modes{gap:8px}
+  body.land637 #runContent .lab588-mode{padding:6px 10px!important;gap:4px}
+  body.land637 #runContent .lab588-mode.on{padding:5px 9px!important}
+  body.land637 #runContent .lab588-mode>b{font-size:22px}
+  body.land637 #runContent .lab588-lines{gap:2px;font-size:12px;line-height:1.3}
+  body.land637 #runContent .lab588-lines>span{gap:6px}
+  body.land637 #runContent .lab588-lines i{font-size:11px;padding:0 5px}
+  body.land637 #runContent .lab588-rate{gap:8px;padding:4px 8px}
+  body.land637 #runContent .lab588-rl b{font-size:28px}
+  body.land637 #runContent .lab588-rl small{font-size:11px}
+  body.land637 #runContent .lab588-pips i{width:12px;height:12px}
+  body.land637 #runContent .lab588-boost{min-height:36px;font-size:13px!important;padding:0 8px!important}
+  body.land637 #runContent .lab588-note{font-size:12px;line-height:1.3}
+  body.land637 #runContent .bt589-bar{gap:12px;padding:6px}
+  body.land637 #runContent .bt589-slot{width:220px;height:48px}
+  body.land637 #runContent .bt589-slot>b{padding:4px 8px;font-size:16px}
+  body.land637 #runContent .bt589-slot .bc588-band{font-size:13px;padding:1px 8px}
+  body.land637 #runContent .bt589-arrow{font-size:28px}
+  body.land637 #runContent .bt589-log{font-size:13px;line-height:1.3}
+  body.land637 #runContent .btn:is(.lab588-go,.bt589-go){height:44px;padding:0 16px;font-size:18px}
+  /* ---- 局外那一套页框（.pg559：选主角和据点的各页共用）：抬头 84 → 48、钮 52 → 36、页边距压一档 ---- */
+  body.land637 .pg559-head{height:48px;min-height:0;gap:12px;padding:0 12px}
+  body.land637 .screen .pg559-head h1{font-size:22px}
+  body.land637 .screen .pg559-btn{height:36px;padding:0 10px}
+  body.land637 .pg559-body{gap:8px;padding:6px 12px}
+  /* 选择本局主角：页高 max(100dvh, 640) 改成 100dvh；左边九个人一排五个（立绘 1 倍），右边立绘 1 倍 + 名字一行、说明在框里滚 */
+  body.land637 .pg559.rs564{height:100dvh}
+  body.land637 #screen-runsetup .rs564-diff{gap:8px}
+  body.land637 #screen-runsetup .rs564-diff>small{font-size:13px}
+  body.land637 #screen-runsetup .rs564-diff>b{padding:3px 8px;font-size:16px}
+  body.land637 .screen .rs564-link{height:36px;font-size:14px}
+  body.land637 .rs564-left{flex:0 0 440px;padding:6px 8px;gap:6px}
+  body.land637 .rs564-right{padding:8px 12px;gap:6px}
+  body.land637 #screen-runsetup .rs564-lh>b{font-size:16px}
+  body.land637 #screen-runsetup .rs564-lh small{font-size:13px}
+  body.land637 .rs564-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+  body.land637 .screen .rs564-tile{height:96px;padding:2px;gap:2px}
+  body.land637 #screen-runsetup .rs564-tile>b{font-size:15px}
+  body.land637 #screen-runsetup .rs564-tile.off>b{font-size:13px}
+  body.land637 #screen-runsetup .rs564-n{right:2px;top:2px;padding:0 3px;gap:2px;font-size:12px}
+  body.land637 #screen-runsetup .rs564-art{width:56px;height:70px;flex:0 0 70px}
+  body.land637 #screen-runsetup :is(.rs564-art,.rs564-big) img{transform:none}
+  body.land637 .rs564-who{flex:0 0 auto;gap:12px;align-items:center}
+  body.land637 #screen-runsetup .rs564-big{width:64px;height:80px;flex:0 0 64px}
+  body.land637 .rs564-id{gap:6px;padding-top:0}
+  body.land637 #screen-runsetup .rs564-name{font-size:28px}
+  body.land637 .rs564-roles{gap:4px}
+  body.land637 .rs564-roles>i{padding:1px 6px;font-size:13px}
+  body.land637 .rs564-tabs{gap:6px}
+  body.land637 .screen .rs564-tab{height:36px;padding:0 8px;gap:6px;font-size:14px}
+  body.land637 .rs564-chip{padding:1px 6px;font-size:12px}
+  body.land637 .rs564-panel{padding:6px 10px;gap:6px;font-size:13px}
+  body.land637 #screen-runsetup .rs564-h>b{font-size:22px}
+  body.land637 .rs564-tag{font-size:12px;padding:1px 6px}
+  body.land637 .rs564-txt{line-height:1.4}
+  body.land637 .rs564-routes{gap:6px}
+  body.land637 .rs564-route{padding:6px 8px;gap:4px}
+  body.land637 #screen-runsetup .rs564-route>b{font-size:16px}
+  body.land637 .screen .rs564-go{height:44px;padding:0 18px;font-size:18px}
+  /* 窗下面还挂着队伍栏的那几屏（节点完成等）：封顶再让出队伍栏那一条（26 高 + 缝）；训练那一屏的队伍栏收掉了（见下），不让 */
+  body.land637 #runContent .rpg-run-shell:has(>.party-compact):not(:has(>.run-view.tr577))>.run-view{max-height:calc(100dvh - 90px)}
+  /* 节点完成：卡里的内距 / 缝、三格（金币 / 团队经验 / 掉落）的数 44 → 28、「接下来」那一串压一档 */
+  body.land637 #runContent .nd612{padding:4px 8px!important}
+  body.land637 #runContent .nd612-card{padding:8px 14px;gap:8px;font-size:15px}
+  body.land637 #runContent .nd612-head{gap:10px}
+  body.land637 #runContent .nd612-t{font-size:24px}
+  body.land637 #runContent :is(.nd612-head small,.nd612-next>small){font-size:13px}
+  body.land637 #runContent .nd612-msg{font-size:14px;line-height:1.35}
+  body.land637 #runContent .nd612-grid{gap:8px}
+  body.land637 #runContent .nd612-g{min-height:56px;padding:6px 10px;column-gap:10px;row-gap:2px}
+  body.land637 #runContent .nd612-ic{width:36px;height:36px;font-size:18px}
+  body.land637 #runContent .nd612-ic svg{width:28px;height:28px}
+  body.land637 #runContent .nd612-g>b{font-size:28px}
+  body.land637 #runContent .nd612-g>small{font-size:13px}
+  body.land637 #runContent .nd612-w>b{font-size:18px}
+  body.land637 #runContent .nd612-next{gap:4px;padding-top:6px}
+  body.land637 #runContent .nd612-chain{gap:6px}
+  body.land637 #runContent .nd612-step{padding:2px 8px;font-size:13px}
+  body.land637 #runContent .btn.nd612-go{height:44px;padding:0 18px;font-size:18px}
+  /* 故事 / Boss 战前对话：立绘 3 倍 → 2 倍（窗 124×148，整个人都在里面），对话框压矮、台词 18 */
+  body.land637 #runContent .st586{gap:4px}
+  body.land637 #runContent .st586-head{min-height:0}
+  body.land637 #runContent .st586-name{font-size:24px}
+  body.land637 #runContent .st586-stage{gap:16px}
+  body.land637 #runContent .st586-p{gap:3px}
+  body.land637 #runContent .st586-face{width:124px;height:148px}
+  body.land637 #runContent .st586-face img{width:112px;height:140px}
+  body.land637 #runContent .st586-face.nat img{width:auto;height:auto;transform:scale(2)}
+  body.land637 #runContent .st586-pn{font-size:16px;padding:1px 8px}
+  body.land637 #runContent .st586-box{min-height:0;padding:8px 12px;gap:4px}
+  body.land637 #runContent .st586-sp{font-size:16px;padding:1px 8px}
+  body.land637 #runContent .st586-line{font-size:18px;line-height:1.35;padding-right:130px}
+  body.land637 #runContent .st586-foot{right:10px;bottom:8px}
+  body.land637 #runContent .st586-text{gap:6px;line-height:1.55;font-size:15px}
+  body.land637 #runContent .bt622-tag{font-size:14px;padding:1px 8px}
+  body.land637 #runContent .btn.st586-go{height:40px;padding:0 16px;font-size:17px}
+  /* 进入下一地区：地区名 44 → 28、打倒的 Boss 那一格立绘 1 倍（框 60×74），常见敌人一行小一号 */
+  body.land637 #runContent .fl618{gap:6px}
+  body.land637 #runContent .fl618-hero{gap:14px;min-height:0}
+  body.land637 #runContent .fl618-where{gap:6px}
+  body.land637 #runContent .fl618-where>small{font-size:13px}
+  body.land637 #runContent .fl618-name{font-size:28px}
+  body.land637 #runContent .fl618-chips{gap:6px}
+  body.land637 #runContent .fl618-chip{padding:1px 8px;font-size:14px}
+  body.land637 #runContent .fl618-boss{gap:10px;padding:4px 10px}
+  body.land637 #runContent .fl618-bf{width:60px;height:74px}
+  body.land637 #runContent .fl618-bf img{transform:none}
+  body.land637 #runContent .fl618-bt{gap:4px;font-size:14px}
+  body.land637 #runContent .fl618-foes{gap:6px;font-size:13px}
+  body.land637 #runContent .fl618-foe{padding:1px 8px}
+  body.land637 #runContent .btn.fl618-go{height:44px;padding:0 18px;font-size:18px}
+  /* 训练 · 第一次强化选路线（顶替两张技能卡的那一块） */
+  body.land637 #runContent .tr577-route-pick{gap:4px}
+  body.land637 #runContent .tr577-rh{gap:8px}
+  body.land637 #runContent .tr577-rh>b{font-size:17px}
+  body.land637 #runContent .tr577-rh>small{font-size:12px}
+  body.land637 #runContent .tr577-opts{gap:8px}
+  body.land637 #runContent .tr577-opt{gap:3px;padding:6px 8px;font-size:13px;line-height:1.35}
+  body.land637 #runContent .tr577-opt.on{padding:5px 7px}
+  body.land637 #runContent .tr577-oh{gap:6px}
+  body.land637 #runContent .tr577-oh>b{font-size:17px}
+  body.land637 #runContent :is(.tr577-tag,.tr577-badge){font-size:12px;padding:1px 6px}
+  body.land637 #runContent .tr577-rfoot{gap:10px}
+  body.land637 #runContent .tr577-skip{height:36px;font-size:14px}
+  /* 训练那一屏左边的名单就是全队，下面的队伍栏让出来 */
+  body.land637 #runContent .rpg-run-shell:has(>.run-view.tr577)>.party-compact{display:none!important}
+  /* 休息：三张卡横排，图标 40 和名字一行、牌子在下面；队伍四人一排，立绘框 40×50（1 倍、露头，同手机那一档） */
+  body.land637 #runContent .rs582{gap:6px}
+  body.land637 #runContent .rs582-opts{gap:8px}
+  body.land637 #runContent .rs582-opt{display:grid;grid-template-columns:40px minmax(0,1fr);align-items:center;gap:6px 10px;padding:8px!important}
+  body.land637 #runContent .rs582-opt.on{padding:7px!important}
+  body.land637 #runContent .rs582-opt>.rs582-chips{grid-column:1/-1}
+  body.land637 #runContent .rs582-icon{width:40px;height:40px;font-size:22px}
+  body.land637 #runContent .rs582-opt>b{font-size:22px}
+  body.land637 #runContent .rs582-chips{gap:4px}
+  body.land637 #runContent .rs582-chips span{font-size:13px;padding:1px 6px}
+  body.land637 #runContent .rs582-team{gap:8px}
+  body.land637 #runContent .rs582-m{padding:4px 6px;gap:6px}
+  body.land637 #runContent .rs582-face{flex:0 0 40px;width:40px;height:50px;place-items:start center}
+  body.land637 #runContent .rs582-face img{width:56px;height:70px;margin-top:-10px}
+  body.land637 #runContent .rs582-mt{gap:3px}
+  body.land637 #runContent .rs582-mn b{font-size:18px}
+  body.land637 #runContent .rs582-mt small{font-size:12px}
+  body.land637 #runContent .rs582-foot{gap:10px}
+  body.land637 #runContent .rs582-tip{font-size:13px}
+  body.land637 #runContent .btn.rs582-go{height:44px;padding:0 18px;font-size:18px}
   `;
   document.head.appendChild(st);
   apply();
