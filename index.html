@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="和平物语" />
-<title>和平物语 拯救世界的冒险谭 Demo v0.1.640</title>
+<title>和平物语 拯救世界的冒险谭 Demo v0.1.641</title>
 <style>
 
   *{box-sizing:border-box}
@@ -3461,7 +3461,7 @@
 <body>
 <div class="app">
   <div class="topbar">
-    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.640</div></div>
+    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.641</div></div>
     <div class="resources" id="topResources"></div>
   </div>
 
@@ -3479,7 +3479,7 @@
         <div class="title-logo-wrap">
           <div class="title-kicker">HEIWA MONOGATARI</div>
           <h1 class="game-title"><span>和平物语</span><small>拯救世界的冒险谭</small></h1>
-          <div class="title-version">Demo v0.1.640</div>
+          <div class="title-version">Demo v0.1.641</div>
         </div>
         <div class="title-controls">
           <div id="titleMenu" class="title-menu"></div>
@@ -45718,8 +45718,9 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   body.land637 .screen .pg559-head h1{font-size:22px}
   body.land637 .screen .pg559-btn{height:36px;padding:0 10px}
   body.land637 .pg559-body{gap:8px;padding:6px 12px}
-  /* 选择本局主角：页高 max(100dvh, 640) 改成 100dvh；左边九个人一排五个（立绘 1 倍），右边立绘 1 倍 + 名字一行、说明在框里滚 */
-  body.land637 .pg559.rs564{height:100dvh}
+  /* 局外那几页（选主角、角色与技能、图鉴、据点商店、扭蛋、回忆大厅、战斗记录）的页高都是 max(100dvh, 640)，横屏 390 高就整页多滚 250 —— 一律 100dvh、里面那一块自己滚。
+     选择本局主角：左边九个人一排五个（立绘 1 倍），右边立绘 1 倍 + 名字一行、说明在框里滚 */
+  body.land637 .pg559:is(.rs564,.ros559,.dex560,.hqs561,.gch562,.mem563,.rec564){height:100dvh}
   body.land637 #screen-runsetup .rs564-diff{gap:8px}
   body.land637 #screen-runsetup .rs564-diff>small{font-size:13px}
   body.land637 #screen-runsetup .rs564-diff>b{padding:3px 8px;font-size:16px}
@@ -45961,6 +45962,136 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   body.land637 #modalBox:not(:has(> .dlg558)) :is(.notice,.tutorial-body){padding:6px 10px;margin:0 0 8px;font-size:15px;line-height:1.45}
   /* 旧弹窗钉底的那一行（v0.1.412 的 .m412-foot）：负 margin 抵掉的是外框内距，跟着 10 / 16 改 */
   body.land637 #modalBox > .m412-foot{bottom:-10px;margin:8px -16px -10px!important;padding:6px 16px 10px!important}
+  /* 角色与技能：左边名单三列「立绘 2 倍 + 名字竖着挤在旁边」（860 宽里名字一字一行）→ 五列竖排小卡（立绘 1 倍在上、名字在下，同手机那一档），
+     名单在框里滚；顶上那条说明一行 12 号；右边详情 402 → 360、立绘 1 倍 */
+  body.land637 .ros559-left{gap:6px}
+  body.land637 .ros559-tip{height:auto;flex:0 0 auto;padding:3px 10px;gap:8px;font-size:12px}
+  body.land637 #screen-roster .ros559-tip>b{font-size:15px;white-space:nowrap}
+  body.land637 .ros559-tip>i{display:none}
+  body.land637 .ros559-chips{gap:4px}
+  body.land637 .ros559-chips button{height:30px;padding:0 10px;font-size:13px}
+  body.land637 .ros559-grid{grid-template-columns:repeat(5,minmax(0,1fr));grid-auto-rows:max-content;gap:6px;overflow-y:auto;align-content:start}
+  body.land637 .ros559-card{flex-direction:column;align-items:center;gap:2px;padding:4px}
+  body.land637 .ros559-card[aria-selected="true"]{padding:3px}
+  body.land637 .ros559-face{flex:0 0 auto;width:60px;height:62px;align-items:flex-start}
+  /* 框带 2px 边，内宽要 ≥ 56（立绘原宽）；全局那条 .pixel-portrait img 带 max-width / max-height:100%，框比图矮时会把它等比缩成 0.8 倍 —— 放开，让框去裁 */
+  body.land637 .ros559-face img{transform:none;margin:-4px 0 0;max-width:none;max-height:none}
+  body.land637 .ros559-txt{align-items:center;text-align:center;gap:0}
+  body.land637 :is(.ros559-txt>small,.ros559-line),body.land637 #screen-roster .ros559-clears{display:none}
+  body.land637 #screen-roster .ros559-name>b{font-size:15px}
+  body.land637 .ros559-detail{flex:0 0 360px;width:360px;padding:10px}
+  body.land637 .ros559-d{gap:8px}
+  body.land637 .ros559-who{gap:10px}
+  body.land637 .ros559-big{flex:0 0 64px;width:64px;height:80px}
+  body.land637 .ros559-big img{transform:none;max-width:none;max-height:none}
+  body.land637 #rosterContent .ros559-h{font-size:24px}
+  body.land637 :is(.ros559-d .ros559-sk-h>b,.ros559-d .ros559-sub){font-size:17px}
+  body.land637 :is(.ros559-p,.ros559-gate){font-size:13px}
+  body.land637 .ros559-more{height:36px;font-size:14px}
+  body.land637 .ros559-route{padding:4px 8px;font-size:13px}
+  body.land637 #rosterContent .ros559-route b{font-size:16px}
+  /* 图鉴：一排九个人的卡 81 宽，立绘 2 倍要 132 高、名字折成两行 —— 立绘 1 倍（框 72）、名字一行 15 号；
+     敌人卡 232 → 自然高（图框 80、Boss / 召唤物 1 倍）、皮肤卡 156 → 110 宽；赐福那一页每行 48 → 36 */
+  body.land637 .dex560-panel{padding:8px 12px;gap:8px}
+  body.land637 .dex560-top{flex:0 0 24px;gap:10px}
+  body.land637 #screen-collection :is(.dex560-top b,.dex560-reg-h b,.dex560-fold b,.dex560-fn b,.dex560-band,.dex560-bd b,.dex560-char b,.dex560-sk-h b,.dex560-skin b){font-size:16px}
+  body.land637 .dex560-bar{width:auto;flex:1}
+  body.land637 #screen-collection .dex560-panel small{font-size:12px}
+  body.land637 .dex560-chars{gap:6px}
+  body.land637 .dex560-char{padding:4px;gap:2px;align-items:center;text-align:center}
+  body.land637 .dex560-char[aria-pressed="true"]{padding:3px}
+  body.land637 .dex560-face{height:72px;align-self:stretch}
+  body.land637 .dex560-face img{transform:none;margin-top:0;max-width:none;max-height:none;flex:none}
+  body.land637 #screen-collection .dex560-char b{white-space:nowrap}
+  body.land637 #screen-collection .dex560-char>span:not(.dex560-face){font-size:13px;white-space:nowrap}
+  body.land637 .dex560-reg{gap:6px}
+  body.land637 .dex560-foes{gap:6px}
+  body.land637 .dex560-foe{min-height:0;padding:4px;gap:3px}
+  body.land637 .dex560-art{flex:0 0 80px;height:80px}
+  body.land637 .dex560-art img{max-height:72px}
+  body.land637 .dex560-art:is(.k-boss,.k-summon) img{transform:none;max-width:100%;max-height:72px}
+  body.land637 .dex560-acts>i{font-size:12px;padding:0 4px}
+  body.land637 .dex560-fold{min-height:36px;padding:0 10px}
+  body.land637 .dex560-rars{gap:6px}
+  body.land637 .dex560-rar{min-height:36px;gap:8px}
+  body.land637 #screen-collection .dex560-band{flex:0 0 56px}
+  body.land637 .dex560-n{flex:0 0 56px}
+  body.land637 .dex560-bl{gap:4px}
+  body.land637 .dex560-bl>button{height:32px;padding:0 8px;font-size:13px}
+  body.land637 .dex560-bd{margin:auto -12px -8px;min-height:0;padding:6px 12px;font-size:13px}
+  body.land637 .dex560-skins{gap:8px}
+  body.land637 .dex560-skin{width:110px;padding:6px;gap:3px}
+  body.land637 .dex560-skin.on{padding:5px}
+  body.land637 .dex560-sk-art{width:80px;height:80px}
+  body.land637 .dex560-sk-art img{transform:none;margin-top:4px}
+  /* 局外几页共用的页签 52 → 40 */
+  body.land637 .pg559-tabs{gap:6px}
+  /* 只在页身那一列里定高：据点商店把页签放在横排的那一条里，flex-basis 在那儿是宽 */
+  body.land637 .pg559-body>.pg559-tabs{flex:0 0 40px}
+  body.land637 .screen .pg559-tab{height:40px;padding:0 12px;gap:6px}
+  body.land637 .screen .pg559-tab b{font-size:17px}
+  /* 据点商店：一行四张卡（每张 200 宽，名字一字一行地折）→ 三张；图 1 倍、名字 17、卡里不留 160 的底 */
+  body.land637 #hqShopContent.pg559-body{gap:6px}
+  body.land637 #screen-hqshop .hqs561-inv{font-size:14px}
+  body.land637 .hqs561-bar{flex:0 0 auto;gap:10px}
+  body.land637 #screen-hqshop .hqs561-foot{font-size:12px}
+  body.land637 .hqs561-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  body.land637 .hqs561-card{padding:6px;gap:8px}
+  body.land637 .hqs561-tile{flex:0 0 60px;width:60px;height:74px}
+  body.land637 .hqs561-tile:not(.ic) img{transform:none;max-width:none;max-height:none}
+  body.land637 .hqs561-tile.ic img{width:36px;height:36px}
+  body.land637 .hqs561-txt{min-height:0;gap:3px;font-size:13px}
+  body.land637 #screen-hqshop .hqs561-txt>b{font-size:17px}
+  body.land637 #screen-hqshop .hqs561-tag{font-size:12px;padding:0 6px}
+  body.land637 .screen .hqs561-buy{height:32px;padding:0 10px;font-size:14px}
+  /* 扭蛋：奖池那一栏 760 定宽，860 里右边抽奖那一栏只剩 40（「还没抽过」一字一行）→ 奖池吃剩下的、抽奖那一栏 250；立绘 2 倍 → 1 倍、大图 3 倍 → 2 倍 */
+  body.land637 #gachaContent.pg559-body{gap:8px}
+  body.land637 .gch562-pool,body.land637 .gch562-draw{padding:8px 10px;gap:6px}
+  body.land637 .gch562-pool{flex:1 1 auto;width:auto;min-width:0}
+  body.land637 .gch562-draw{flex:0 0 250px;width:250px}
+  body.land637 #screen-gacha :is(.gch562-title,.gch562-last>b){font-size:22px}
+  body.land637 #screen-gacha :is(.gch562-h>b,.gch562-c>b){font-size:16px}
+  body.land637 #screen-gacha :is(.gch562-pool small,.gch562-last>small){font-size:13px}
+  body.land637 .gch562-cs{gap:6px}
+  body.land637 .gch562-c{padding:4px;gap:3px}
+  body.land637 .gch562-art{height:76px}
+  body.land637 .gch562-art img{transform:none}
+  body.land637 .gch562-sk{gap:4px}
+  body.land637 .gch562-sk>span{padding:0 6px;font-size:12px}
+  body.land637 .gch562-last{gap:6px}
+  body.land637 .gch562-big{width:124px;height:148px}
+  body.land637 .gch562-big img{transform:scale(2)}
+  body.land637 .gch562-big.coin svg{width:64px;height:64px}
+  body.land637 .screen :is(.gch562-t,.gch562-k){font-size:17px}
+  body.land637 .screen .gch562-t{height:44px}
+  body.land637 .screen .gch562-k{height:40px}
+  body.land637 .screen .gch562-ad{height:36px;font-size:14px}
+  /* 回忆大厅：卡里的图 142 → 80，字小一档 */
+  body.land637 .mem563-panel{padding:8px 12px;gap:6px}
+  body.land637 .mem563-got{gap:8px}
+  body.land637 .screen .mem563-card{padding:6px;gap:4px}
+  body.land637 .mem563-art{height:80px}
+  body.land637 .mem563-art img{transform:none;margin:0 6px}
+  /* 战斗记录：一行里「局终 / 走到哪 / 队伍 / 统计」几栏定宽 110 / 250 / 204，统计那一栏只剩 120（一项一行）→ 90 / 170 / 136 */
+  body.land637 .rec564-top{flex:0 0 40px;gap:6px}
+  body.land637 #screen-record .rec564-top>b{font-size:17px;margin-right:6px}
+  body.land637 .rec564-chips{gap:6px}
+  body.land637 .screen .rec564-chip{height:32px;padding:0 10px;font-size:14px}
+  body.land637 #screen-record .rec564-top>small{font-size:12px}
+  body.land637 .rec564-list{gap:6px}
+  body.land637 .rec564-row{min-height:0;padding:6px 10px;gap:10px}
+  body.land637 :is(.rec564-c1,.rec564-c2,.rec564-c4){gap:2px}
+  body.land637 .rec564-c1{flex:0 0 90px}
+  body.land637 .rec564-c2{flex:0 0 170px}
+  body.land637 #screen-record .rec564-row small{font-size:12px}
+  body.land637 #screen-record .rec564-c2>b{font-size:17px}
+  body.land637 #screen-record .rec564-badge{font-size:16px;padding:1px 8px}
+  body.land637 .rec564-team{flex:0 0 136px;gap:4px}
+  body.land637 #screen-record .rec564-p{width:31px;height:40px;flex:0 0 31px}
+  body.land637 #screen-record .rec564-p img{margin-top:-6px}
+  body.land637 .screen .rec564-go{height:36px;font-size:14px}
+  body.land637 .screen .rec564-menu button{height:36px}
+  body.land637 #screen-record .rec564-menu small{font-size:12px}
   /* 训练那一屏左边的名单就是全队，下面的队伍栏让出来 */
   body.land637 #runContent .rpg-run-shell:has(>.run-view.tr577)>.party-compact{display:none!important}
   /* 休息：三张卡横排，图标 40 和名字一行、牌子在下面；队伍四人一排，立绘框 40×50（1 倍、露头，同手机那一档） */

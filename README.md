@@ -2,7 +2,7 @@
 
 网页版，打开就能玩：<https://jasonzou1.github.io/heiwa-play/>
 
-这个仓库只放游戏本体（`index.html`，单文件、不用联网、不用安装）。当前版本：Demo v0.1.640。
+这个仓库只放游戏本体（`index.html`，单文件、不用联网、不用安装）。当前版本：Demo v0.1.641。
 
 ## 在 iPhone 上全屏玩
 
