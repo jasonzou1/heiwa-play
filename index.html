@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="和平物语" />
-<title>和平物语 拯救世界的冒险谭 Demo v0.1.639</title>
+<title>和平物语 拯救世界的冒险谭 Demo v0.1.640</title>
 <style>
 
   *{box-sizing:border-box}
@@ -3461,7 +3461,7 @@
 <body>
 <div class="app">
   <div class="topbar">
-    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.639</div></div>
+    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.640</div></div>
     <div class="resources" id="topResources"></div>
   </div>
 
@@ -3479,7 +3479,7 @@
         <div class="title-logo-wrap">
           <div class="title-kicker">HEIWA MONOGATARI</div>
           <h1 class="game-title"><span>和平物语</span><small>拯救世界的冒险谭</small></h1>
-          <div class="title-version">Demo v0.1.639</div>
+          <div class="title-version">Demo v0.1.640</div>
         </div>
         <div class="title-controls">
           <div id="titleMenu" class="title-menu"></div>
@@ -45293,6 +45293,8 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   /* ---- 队伍栏：一条，每人只剩名字 + 血条 + 血量（立绘、技能等级点开详情看） ---- */
   body.land637 #runContent .party-compact{gap:6px!important}
   body.land637 #runContent .party-compact .party-mini{padding:3px 8px!important;min-height:0!important}
+  /* 空位那一格只有「空位」两个字：18 号字、23 的行高会把整条撑到 33（队伍没满的时候，开局那几窗底下就是这一条） */
+  body.land637 #runContent .party-compact .party-mini.empty{font-size:13px;line-height:16px}
   body.land637 #runContent .pc573-face,body.land637 #runContent .party-compact .party-mini-skill{display:none!important}
   body.land637 #runContent .pc573-txt{flex-direction:row;align-items:center;gap:8px}
   body.land637 #runContent .party-compact .party-mini-name b{font-size:16px}
@@ -45597,34 +45599,34 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   body.land637 #runContent .fg579-opt{min-height:36px;font-size:13px}
   body.land637 #runContent .fg579-foot{position:sticky;bottom:0}
   body.land637 #runContent .btn.fg579-go{height:40px;padding:0 14px;font-size:16px}
-  /* 获得武器（宝箱 / Boss 掉落）：武器一行压到 56；每人一栏立绘 1 倍（40×46 的窗露头，同休息屏），差值字小一号，钮 36 */
-  body.land637 #runContent .wg613{gap:6px}
-  body.land637 #runContent .wg613-w{gap:12px;padding:4px 10px}
-  body.land637 #runContent .wg613-ic{width:48px;height:48px;flex:0 0 48px;font-size:28px}
-  body.land637 #runContent .wg613-wn{min-width:150px;max-width:260px;gap:4px}
-  body.land637 #runContent .wg613-wn>b{font-size:22px}
-  body.land637 #runContent .wg613-base{font-size:13px;padding:0 6px}
-  body.land637 #runContent .wg613-es{gap:2px;font-size:13px;line-height:1.3}
-  body.land637 #runContent .wg613-es>li>b{font-size:16px}
-  body.land637 #runContent .wg613-team{gap:8px}
-  body.land637 #runContent .wg613-m{padding:6px;gap:6px}
-  body.land637 #runContent .wg613-mh{gap:8px}
-  body.land637 #runContent .wg613-face{width:40px;height:46px;flex:0 0 40px}
-  body.land637 #runContent .wg613-face img{width:56px;height:70px;margin-top:-10px}
-  body.land637 #runContent .wg613-mt{gap:3px}
-  body.land637 #runContent .wg613-mt>b{font-size:18px}
-  body.land637 #runContent .wg613-mt>small,body.land637 #runContent .wg613-kind{font-size:12px}
-  body.land637 #runContent .wg613-tab{min-height:32px;font-size:13px!important}
-  body.land637 #runContent .wg613-o{gap:4px}
-  body.land637 #runContent .wg613-o+.wg613-o{padding-top:4px}
-  body.land637 #runContent .wg613-sl{font-size:13px}
-  body.land637 #runContent .wg613-rs{gap:2px}
-  body.land637 #runContent .wg613-r{font-size:13px;line-height:1.25}
-  body.land637 #runContent .wg613-r>i{width:28px;flex-basis:28px}
-  body.land637 #runContent .wg613-r>b{font-size:16px}
+  /* 获得武器（宝箱 / Boss 掉落）和商店的全队对比（同一份栏，画在弹窗里）：武器一行压到 56；每人一栏立绘 1 倍（40×46 的窗露头，同休息屏），差值字小一号，钮 36 */
+  body.land637 :is(#runContent,#modalBox) .wg613{gap:6px}
+  body.land637 :is(#runContent,#modalBox) .wg613-w{gap:12px;padding:4px 10px}
+  body.land637 :is(#runContent,#modalBox) .wg613-ic{width:48px;height:48px;flex:0 0 48px;font-size:28px}
+  body.land637 :is(#runContent,#modalBox) .wg613-wn{min-width:150px;max-width:260px;gap:4px}
+  body.land637 :is(#runContent,#modalBox) .wg613-wn>b{font-size:22px}
+  body.land637 :is(#runContent,#modalBox) .wg613-base{font-size:13px;padding:0 6px}
+  body.land637 :is(#runContent,#modalBox) .wg613-es{gap:2px;font-size:13px;line-height:1.3}
+  body.land637 :is(#runContent,#modalBox) .wg613-es>li>b{font-size:16px}
+  body.land637 :is(#runContent,#modalBox) .wg613-team{gap:8px}
+  body.land637 :is(#runContent,#modalBox) .wg613-m{padding:6px;gap:6px}
+  body.land637 :is(#runContent,#modalBox) .wg613-mh{gap:8px}
+  body.land637 :is(#runContent,#modalBox) .wg613-face{width:40px;height:46px;flex:0 0 40px}
+  body.land637 :is(#runContent,#modalBox) .wg613-face img{width:56px;height:70px;margin-top:-10px}
+  body.land637 :is(#runContent,#modalBox) .wg613-mt{gap:3px}
+  body.land637 :is(#runContent,#modalBox) .wg613-mt>b{font-size:18px}
+  body.land637 :is(#runContent,#modalBox) .wg613-mt>small,body.land637 :is(#runContent,#modalBox) .wg613-kind{font-size:12px}
+  body.land637 :is(#runContent,#modalBox) .wg613-tab{min-height:32px;font-size:13px!important}
+  body.land637 :is(#runContent,#modalBox) .wg613-o{gap:4px}
+  body.land637 :is(#runContent,#modalBox) .wg613-o+.wg613-o{padding-top:4px}
+  body.land637 :is(#runContent,#modalBox) .wg613-sl{font-size:13px}
+  body.land637 :is(#runContent,#modalBox) .wg613-rs{gap:2px}
+  body.land637 :is(#runContent,#modalBox) .wg613-r{font-size:13px;line-height:1.25}
+  body.land637 :is(#runContent,#modalBox) .wg613-r>i{width:28px;flex-basis:28px}
+  body.land637 :is(#runContent,#modalBox) .wg613-r>b{font-size:16px}
   /* 刃纹那一行「旧 → 新」收两行（新那几条的全文在上面武器那一行里） */
-  body.land637 #runContent .wg613-r.ed>span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
-  body.land637 #runContent .wg613-go{min-height:36px;padding:2px 8px!important;font-size:14px!important}
+  body.land637 :is(#runContent,#modalBox) .wg613-r.ed>span{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+  body.land637 :is(#runContent,#modalBox) .wg613-go{min-height:36px;padding:2px 8px!important;font-size:14px!important}
   /* 窗底那一行只有「收进行囊 / 拆解」两颗次要钮：钉在窗底会盖住每人那一栏的「装备给…」。挪到抬头那一行的右边（抬头只有标题牌和一句话，右边空着），
      和别的节点屏「离开」的位置一样 */
   body.land637 #runContent .rpg-run-shell>.run-view.wg613{position:relative}
@@ -45815,6 +45817,150 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   body.land637 #runContent :is(.tr577-tag,.tr577-badge){font-size:12px;padding:1px 6px}
   body.land637 #runContent .tr577-rfoot{gap:10px}
   body.land637 #runContent .tr577-skip{height:36px;font-size:14px}
+  /* ---- 弹窗（.dlg558 那一套外框）：上下各留 8、内距 10/16；标题 33 → 24、标题行和窗底那一行都钉住（窗里滚的时候主钮一直看得见）。
+     窗底那一行在外框上用负 margin 抵掉内距，所以 bottom / margin 跟着内距改。
+     三选一 / 全队对比 / 获得失去 这三窗的底行是各自的类（不是 .dlg558-foot），同样钉住 ---- */
+  body.land637 #modalBox:has(> .dlg558){max-height:calc(100dvh - 16px);padding:10px 16px}
+  body.land637 .dlg558{gap:8px}
+  body.land637 .dlg558-head{min-height:36px;gap:10px;position:sticky;top:-10px;z-index:2;margin-top:-10px;padding-top:10px;background:var(--d558-bg)}
+  body.land637 #modalBox .dlg558-head h2{font-size:24px}
+  body.land637 #modalBox .dlg558 small{font-size:14px}
+  body.land637 #modalBox .dlg558-btn{height:40px;padding:0 12px}
+  body.land637 .dlg558-foot{bottom:-10px;margin:auto -16px -10px;padding:6px 16px 10px;gap:10px}
+  body.land637 #modalBox .dlg558-go{height:44px;padding:0 18px;font-size:18px}
+  body.land637 #modalBox .dlg558-opt{padding:8px;gap:4px}
+  body.land637 #modalBox .dlg558-opt[aria-checked="true"]{padding:7px}
+  body.land637 #modalBox :is(.bp619-foot,.wc615-foot,.gt620-foot){position:sticky;bottom:-10px;z-index:2;margin:0 -16px -10px;padding:6px 16px 10px;
+    background:var(--d558-bg);border-top:2px solid #dbe3ec;gap:10px}
+  /* 赐福三选一：三张卡照旧并排，卡里图标 44 和名字一行、说明在下面 14 号（电脑那一档图标 84、名字 33，一张卡 300 高） */
+  body.land637 #modalBox .bp619{gap:8px}
+  body.land637 #modalBox .bp619-hide{height:36px;font-size:14px}
+  body.land637 #modalBox .bp619-grid{gap:10px}
+  body.land637 #modalBox .bp619-card .bp619-band{padding:3px 12px;font-size:16px}
+  body.land637 #modalBox .bp619-body{padding:8px 10px;flex-direction:row;flex-wrap:wrap;align-items:center;gap:6px 10px}
+  body.land637 #modalBox .bp619-ic{width:44px;height:44px;flex:0 0 44px}
+  body.land637 #modalBox .bp619-ic i{font-size:24px}
+  body.land637 #modalBox .bp619-card b{font-size:20px;flex:1 1 calc(100% - 54px)}
+  body.land637 #modalBox .bp619-card .bless-desc{flex:1 1 100%;font-size:14px;line-height:1.4}
+  body.land637 #modalBox .bp619 .bless-eat-warn225{padding:6px 10px}
+  body.land637 #modalBox .bp619 .bless-eat-warn225 b{font-size:18px}
+  body.land637 #modalBox .bp619 .bless-eat-warn225 span{font-size:14px}
+  body.land637 #modalBox .bp619-log p{font-size:14px}
+  body.land637 #modalBox .btn.bp619-reroll{height:40px;font-size:15px}
+  /* 本局禁令（开局第一窗 / 局内查看同一份）：一行三张卡、体系名 44 → 24、芯片 12 号；留下的那一条（.ban566-keep）跟着小一号 */
+  body.land637 #modalBox .ban566-steps{gap:4px}
+  body.land637 #modalBox .ban566-steps>span{padding:1px 6px;font-size:13px}
+  body.land637 #modalBox .ban566-cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  body.land637 #modalBox .ban566-card{padding:8px 10px;gap:4px}
+  body.land637 #modalBox .ban566-tag{font-size:12px;padding:0 6px}
+  body.land637 #modalBox .ban566-sys{font-size:24px}
+  body.land637 #modalBox .ban566-ch{gap:2px 8px;font-size:13px}
+  body.land637 #modalBox .ban566-chips{gap:4px}
+  body.land637 #modalBox :is(.ban566-chip,.ban566-more){font-size:12px;padding:0 6px}
+  body.land637 #modalBox .ban566-band{font-size:15px;padding:2px 8px}
+  body.land637 #modalBox .ban566-kb{padding:4px 8px;gap:2px;font-size:13px;line-height:1.35}
+  body.land637 #modalBox .ban566-kn{font-size:16px}
+  body.land637 #modalBox .ban566-fold{gap:4px}
+  body.land637 #modalBox .ban566-fb{height:36px;padding:0 10px;font-size:14px}
+  /* 开局另外三窗：引路人一行四张（卡 184 → 自然高、名字 33 → 22）、行囊一行三张（172 → 自然高）、携带的格子 60 → 40、道具一行 */
+  body.land637 #modalBox .g567-grid{gap:8px}
+  body.land637 #modalBox .g567-card{height:auto;min-height:0}
+  body.land637 #modalBox .g567-h{gap:6px}
+  body.land637 #modalBox .g567-name{font-size:22px}
+  body.land637 #modalBox .g567-tag{font-size:12px}
+  body.land637 #modalBox .g567-desc{font-size:13px;line-height:1.35}
+  body.land637 #modalBox .g567-note{font-size:12px;padding:0 6px}
+  body.land637 #modalBox .s568-grid{gap:8px}
+  body.land637 #modalBox .s568-card{height:auto;min-height:0;gap:4px}
+  body.land637 #modalBox .s568-name{font-size:20px}
+  body.land637 #modalBox .s568-desc{gap:2px;font-size:13px;line-height:1.35}
+  body.land637 #modalBox .ld569-slots{gap:8px}
+  body.land637 #modalBox .ld569-slot{height:40px}
+  body.land637 #modalBox .ld569-grid{gap:8px}
+  body.land637 #modalBox .ld569-row{padding:6px 10px;gap:8px}
+  body.land637 #modalBox .ld569-row.on{padding:5px 9px}
+  body.land637 #modalBox .ld569-c{gap:2px;font-size:13px;line-height:1.35}
+  body.land637 #modalBox .ld569-n{font-size:18px}
+  body.land637 #modalBox .ld569-take{height:36px;padding:0 10px}
+  body.land637 #modalBox .ld569-none{padding:6px 10px;font-size:14px}
+  /* 局内的几个「看一眼」的窗：一行排得下的列数排满 860 那一行 ——
+     队伍状态四人一行（立绘 1 倍、技能两颗钮竖排）、行囊三格一行、已获得的赐福四条一行；字小一档 */
+  body.land637 #modalBox .ps627-top{gap:6px;font-size:14px}
+  body.land637 #modalBox .ps627-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  body.land637 #modalBox .ps627-m{padding:6px}
+  body.land637 #modalBox .ps627-m>summary{gap:8px}
+  body.land637 #modalBox .ps627-face{flex:0 0 60px;width:60px;height:74px}
+  body.land637 #modalBox .ps627-face img{width:56px;height:70px;margin-top:0}
+  body.land637 #modalBox .ps627-info{gap:3px;font-size:13px}
+  body.land637 #modalBox .ps627-nm>b{font-size:18px}
+  body.land637 #modalBox .ps627-bar{height:10px}
+  body.land637 #modalBox .ps627-hp{gap:2px 8px}
+  body.land637 #modalBox .ps627-stats{gap:0 8px}
+  body.land637 #modalBox .ps627-skills{grid-template-columns:minmax(0,1fr);gap:4px;margin-top:6px}
+  body.land637 #modalBox .ps627-sk{min-height:36px;padding:0 6px;gap:6px;font-size:13px}
+  body.land637 #modalBox .ps627-bond{min-height:36px}
+  body.land637 #modalBox .ps627-detail{bottom:56px;padding:8px 10px;gap:4px;font-size:13px}
+  body.land637 #modalBox .dlg558-btn:is(.ps627-close,.st630-close,.bl626-close){height:40px;padding:0 16px;font-size:18px}
+  body.land637 #modalBox .st630-cnt{font-size:20px}
+  body.land637 #modalBox .st630-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  body.land637 #modalBox .st630-card{min-height:0;padding:6px 10px;gap:4px;font-size:13px}
+  body.land637 #modalBox .st630-nm>b{font-size:18px}
+  body.land637 #modalBox .st630-rar{font-size:12px;padding:0 6px}
+  body.land637 #modalBox .st630-row{gap:4px}
+  body.land637 #modalBox :is(.st630-st,.st630-ed){padding:0 6px}
+  body.land637 #modalBox .st630-empty{min-height:96px}
+  body.land637 #modalBox .bl626-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+  body.land637 #modalBox .bl626-band{padding:2px 8px;font-size:15px}
+  body.land637 #modalBox .bl626-body{padding:6px 8px 8px;gap:3px;font-size:13px}
+  body.land637 #modalBox .bl626-nm>b{font-size:17px}
+  body.land637 #modalBox .bl626-d{line-height:1.35}
+  body.land637 #modalBox .dlg558 h3.bl626-ch{font-size:17px}
+  /* 全队对比的「回行囊 / 回商店」56 → 40（钉在窗底时不盖住每人那一栏的钮）；
+     获得 / 失去那一窗 640 → 820 宽，「本次失去 / 获得 / 获得的诅咒」几段并排成列，卡压一档 */
+  body.land637 #modalBox .btn.wc615-back{height:40px;padding:0 16px;font-size:18px}
+  body.land637 #modalBox:has(> .gt620){width:min(820px,100%)}
+  body.land637 #modalBox .gt620-list{flex-direction:row;align-items:flex-start;gap:8px;max-height:none;overflow:visible}
+  body.land637 #modalBox .gt620-sect{flex:1 1 0;min-width:0;gap:4px}
+  body.land637 #modalBox .gt620-band{padding:2px 10px;font-size:16px}
+  body.land637 #modalBox .gt620-body{padding:6px 10px;gap:8px}
+  body.land637 #modalBox .gt620-ic{width:40px;height:40px;flex:0 0 40px;font-size:20px}
+  body.land637 #modalBox .gt620-t{gap:3px}
+  body.land637 #modalBox .gt620-d{font-size:13px;line-height:1.35}
+  body.land637 #modalBox .gt620-note{font-size:14px}
+  body.land637 #modalBox .gt620-num{font-size:28px}
+  /* 选择难度：卡 383 高 → 自然高（名字 44 → 28、「选这个」36）；设置：每一行 44 → 36、名字 22 → 17、底下两块（高级 / 危险）不留 104 的底 */
+  body.land637 .dif558-cards{gap:10px}
+  body.land637 .dif558-card{min-height:0;padding:10px 12px;gap:6px}
+  body.land637 .dif558-card:hover{padding:9px 11px}
+  body.land637 #modalBox .dif558-card>b{font-size:28px}
+  body.land637 .dif558-tags>span{padding:1px 6px;font-size:14px}
+  body.land637 #modalBox .dif558-card>small{font-size:13px;line-height:1.35}
+  body.land637 .dif558-go{height:36px;padding:0 14px}
+  body.land637 .set557-cols{gap:0 20px}
+  body.land637 .set557-row{padding:4px 0;gap:2px}
+  body.land637 .set557-line{min-height:36px;gap:8px}
+  body.land637 #modalBox .set557-line>b{font-size:17px}
+  body.land637 .set557-seg button{height:36px;min-width:48px;padding:0 8px}
+  body.land637 .set557-sw{height:36px}
+  body.land637 .set557-foot{gap:12px}
+  body.land637 :is(.set557-adv,.set557-danger){min-height:0;padding:6px 10px;gap:4px}
+  body.land637 .set557-advt{height:36px;font-size:17px}
+  body.land637 #modalBox .set557-danger h3{font-size:17px}
+  body.land637 .set557-reset{height:36px}
+  /* 还没照稿重画的旧弹窗（教程、道具使用、确认框……，v0.1.632 套的那一份外框）：同一档的内距和字号；选项一行两个 */
+  body.land637 #modalBox:not(:has(> .dlg558)){max-height:calc(100dvh - 16px);padding:10px 16px}
+  body.land637 #modalBox:not(:has(> .dlg558)) h2{margin:0 0 8px;font-size:24px}
+  body.land637 #modalBox:not(:has(> .dlg558)) h3{margin:8px 0 4px;font-size:18px}
+  body.land637 #modalBox:not(:has(> .dlg558)) p{margin:0 0 8px;font-size:15px;line-height:1.4}
+  body.land637 #modalBox:not(:has(> .dlg558)) .subtitle{margin:-4px 0 8px;font-size:14px}
+  body.land637 #modalBox:not(:has(> .dlg558)) :is(.btn,.option){font-size:16px}
+  body.land637 #modalBox:not(:has(> .dlg558)) .btn{min-height:40px;padding:4px 14px}
+  body.land637 #modalBox:not(:has(> .dlg558)) .btn.primary{min-height:44px;padding:4px 20px;font-size:18px}
+  body.land637 #modalBox:not(:has(> .dlg558)) .option-list{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 8px!important;margin:0 0 8px}
+  body.land637 #modalBox:not(:has(> .dlg558)) .option{min-height:40px;padding:8px 12px!important}
+  body.land637 #modalBox:not(:has(> .dlg558)) :is(.notice,.tutorial-body){padding:6px 10px;margin:0 0 8px;font-size:15px;line-height:1.45}
+  /* 旧弹窗钉底的那一行（v0.1.412 的 .m412-foot）：负 margin 抵掉的是外框内距，跟着 10 / 16 改 */
+  body.land637 #modalBox > .m412-foot{bottom:-10px;margin:8px -16px -10px!important;padding:6px 16px 10px!important}
   /* 训练那一屏左边的名单就是全队，下面的队伍栏让出来 */
   body.land637 #runContent .rpg-run-shell:has(>.run-view.tr577)>.party-compact{display:none!important}
   /* 休息：三张卡横排，图标 40 和名字一行、牌子在下面；队伍四人一排，立绘框 40×50（1 倍、露头，同手机那一档） */
