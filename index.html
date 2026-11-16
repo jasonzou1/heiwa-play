@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="和平物语" />
-<title>和平物语 拯救世界的冒险谭 Demo v0.1.642</title>
+<title>和平物语 拯救世界的冒险谭 Demo v0.1.643</title>
 <style>
 
   *{box-sizing:border-box}
@@ -3436,7 +3436,7 @@
 <body>
 <div class="app">
   <div class="topbar">
-    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.642</div></div>
+    <div><div class="brand">和平物语 拯救世界的冒险谭</div><div class="version">Demo v0.1.643</div></div>
     <div class="resources" id="topResources"></div>
   </div>
 
@@ -3454,7 +3454,7 @@
         <div class="title-logo-wrap">
           <div class="title-kicker">HEIWA MONOGATARI</div>
           <h1 class="game-title"><span>和平物语</span><small>拯救世界的冒险谭</small></h1>
-          <div class="title-version">Demo v0.1.642</div>
+          <div class="title-version">Demo v0.1.643</div>
         </div>
         <div class="title-controls">
           <div id="titleMenu" class="title-menu"></div>
@@ -19751,12 +19751,21 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
 
 <script>
 // ===== v0.1.172：难度系统（简单 / 困难）=====
-// 简单难度：小怪数值 80%，Boss 回到「没有特殊技」的最初形态——没有特殊技、没有吟唱技、没有锁血，
+// 简单难度：敌人按下面 EASY_SCALE 那张表打折，Boss 回到「没有特殊技」的最初形态——没有特殊技、没有吟唱技、没有锁血，
 //   只剩常规行动；我方也没有格挡，但依旧显示谁被瞄准／谁会被群体命中。
 // 困难难度 = 当前这一整套特殊技系统。三档一开始就都能选，没有解锁条件。
 (function(){
-  const EASY_MOB_SCALE=.80;
-  const STAT_KEYS=['maxHp','hp','patk','matk','pdef','mdef'];
+  /* 简单难度的敌方倍率，乘在困难难度的数值上。
+     原来只有一个数：小怪六项（含防御）一律 ×0.80，Boss 一点不打折。
+     2026-11-16 项目方转来「简单难度反应太难了」—— 机器人整局实测通关只有一半，
+     死在教主（不到一半能过）和第 3 地区小怪上。改成血量 / 攻击 / 防御分开给：
+       · 小怪的血量和攻击再降一档，防御停在原来的 0.80 不动 —— 伤害是减法公式，防御一动整条曲线都会歪；
+       · Boss 第一次有了简单难度的折扣（只打血量和攻击）。教主的两个信徒是开场按教主的数值生成的
+         （那一块在文件里更靠前 → 包装层更靠里，这里跑的时候信徒已经在场上），这里一起乘，比例不变。
+     机器人整局实测的前后对比和试过的每一档在 docs/difficulty-638.md。 */
+  const EASY_SCALE={mob:{hp:.68,at:.68,df:.80},boss:{hp:.75,at:.75,df:1}};
+  Game.easyScale638=EASY_SCALE;
+  const STAT_OF={maxHp:'hp',hp:'hp',patk:'at',matk:'at',pdef:'df',mdef:'df'};
 
   // ---------- 存档 ----------
   function ensureDifficulty(){
@@ -19850,12 +19859,17 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   };
 
   // ---------- 战斗 ----------
-  function scaleEasyMobs(){
-    if(!combat||combat.isBoss)return;          // Boss 战没有小怪，教主的信徒也不受影响
+  // 翠木神龛是固定血量、每次受击固定 1 点的机关，不打折（同肉鸽那几层缩放）。
+  function scaleEasyEnemies(){
+    if(!combat)return;
+    const m=combat.isBoss?EASY_SCALE.boss:EASY_SCALE.mob;
     for(const e of (combat.enemies||[])){
       if(!e||e._easy172Scaled||e.isShrine)continue;
       e._easy172Scaled=true;
-      for(const k of STAT_KEYS)if(Number(e[k])>0)e[k]=Math.max(1,Math.round(Number(e[k])*EASY_MOB_SCALE));
+      for(const k of Object.keys(STAT_OF)){
+        const f=Number(m[STAT_OF[k]]);
+        if(Number(e[k])>0&&f!==1)e[k]=Math.max(1,Math.round(Number(e[k])*f));
+      }
       e.hp=Math.min(e.hp,e.maxHp);
     }
   }
@@ -19864,14 +19878,14 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
     const r=startBattle172(...a);
     if(!combat)return r;
     if(Game.isEasy()){
-      scaleEasyMobs();
+      scaleEasyEnemies();
       // 史瑞妮在简单难度开场自带翠木神龛。
       const owner=(combat.enemies||[]).find(e=>e&&e.key==='shiruini'&&e.hp>0);
       if(owner)Game.summonEasyShrine?.(owner);
       Game.refreshShrineGuard?.();
     }
     // 开场那一帧的血量快照是基础 startBattle 渲染时抓的，那时 Boss 的 ×2 重标定、
-    // 简单难度的 80% 缩放、翠木神龛都还没生效，直接沿用会让开场显示成一半血量。
+    // 简单难度的打折、翠木神龛都还没生效，直接沿用会让开场显示成一半血量。
     // 所有层都改完之后作废这份快照，下一次渲染重新抓。
     combat.fxVisualStart=null;combat.fxVisualCurrent=null;
     UI.renderCombat();
@@ -25574,8 +25588,16 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   // 在第1地区几乎无感，到第3地区却能把我方净伤压掉一大半，于是难度是「前松后爆」。
   // 这里在 v0.1.200 之后再补一层修正：血量 / 攻击 / 防御分开给系数，
   // 目标是三个地区的危险比都落在 0.45~0.75，Boss 略高于同地区的普通战斗。
-  const MOB_FIX  =[{hp:1.37,at:1.16,df:1},{hp:1.51,at:1.10,df:1},{hp:0.87,at:0.73,df:1}];
-  // 强敌在 MOB_FIX 之上再乘一层，按地区分开给。
+  //
+  // 第 1、2 地区这两行是 2026-11-16 项目方报「一层太难、二层太简单」之后重标的：
+  // 第 1 地区开局两个人、主动 Lv.1、赐福没几条，吃的却已经是整条倍率链；
+  // 到第 2 地区四个人、主动 Lv.3 上下、赐福八条 —— 队伍长得比这张表快，
+  // 机器人整局实测小怪每场掉血 第 1 地区 16.6%、第 2 地区 8.2%，难度是倒挂的。
+  // 这两行的目标是「第 2 地区每场的消耗不低于第 1 地区」（实测 12.5% / 13.2%）。
+  // 第 2 地区加得多是因为加少了推不动：四人队的护盾和回复会把多出来的伤害吃掉。
+  // 量法和每一档试过的数在 docs/difficulty-638.md。
+  const MOB_FIX  =[{hp:1.16,at:1.02,df:1},{hp:1.74,at:1.43,df:1},{hp:0.87,at:0.73,df:1}];
+  // 强敌在 MOB_FIX 之上再乘一层，按地区分开给 —— 但这一层是从下面的 ELITE_ABS 反推出来的，见那里。
   // v0.1.281：这条曲线整个翻过来了。原来是 0.77 / 0.97 / 1.07（越往后越硬），
   // 实测出来的形状是「第1地区随手清（各阵容各赐福厚度全部 95~100%）、
   // 第3地区基本打不过（0~65%）」—— 正好和强敌这个节点该有的样子相反。
@@ -25597,7 +25619,12 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   // v0.1.309：第 1 地区强敌血量 1.35 → 1.15（×0.85）。攻击不动 ——
   // v0.1.281 实测过：强敌的难度来自攻击（灭团率）而不是血量，
   // 所以这一刀砍的是「打太久」，不是「打不过」。第 2、3 地区不变。
-  const ELITE_FIX=[{hp:1.15,at:1.35,df:1},{hp:1.07,at:1.06,df:1},{hp:0.70,at:0.70,df:1}];
+  //
+  // 上面那段讲的都是强敌的**绝对**强度（相对困难难度的小怪）。这张表原来叫 ELITE_FIX、写成「MOB_FIX 之上再乘」，
+  // 于是小怪那一行一动，强敌就被连带着一起变。2026-11-16 调小怪时拆开了：
+  // 这里直接存强敌的绝对倍率，每一格写成「那之前的 MOB_FIX × 那之前的 ELITE_FIX」，两个乘数照原样留着，一个数没动；
+  // fixEnemies216 对强敌直接用它，不再经过 MOB_FIX。以后调小怪，强敌不跟着走；要调强敌就改这里。
+  const ELITE_ABS=[{hp:1.37*1.15,at:1.16*1.35},{hp:1.51*1.07,at:1.10*1.06},{hp:0.87*0.70,at:0.73*0.70}];
   // v0.1.280：ELITE_N_FIX 退休。它是「按地区 × 按只数」再修一层的表，
   // 而 v0.1.216 的 ELITE_SHAPES 里已经写死了一层只数补偿，同一件事有两层。
   // 现在只数这件事只在下面的 MOB_N_FIX 里做一次，普通战斗和强敌战斗共用，
@@ -25646,7 +25673,15 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   // 就是为了不把已经标定过的单回合峰值（教主 ≤65% 我方总血那条线）推翻。
   // 机制护盾和硬锁血线都是按 maxHp 算的，会跟着一起放大，不需要另外改。
   const BOSS_GLOBAL={hp:2.00,at:1.35,df:1};
-  const BOSS_FIX=[BOSS_GLOBAL,BOSS_GLOBAL,BOSS_GLOBAL];
+  // 第 1 地区的 Boss 在全局倍率上再乘一层（2026-11-16，项目方「一层太难」）。
+  // 这不是把上面「Boss 倍率不按地区给」那条翻回去：那一条防的是同一个 Boss 因为抽到的地区不同而拿到两套**个体**数值，
+  // 个体差异仍然只在 BOSS_TUNE 里给。这里管的是「第一个 Boss 撞上的是什么队伍」——
+  // 第 1 地区的 Boss 面对的是两人队、主动 Lv.4 上下、赐福四条的家底，不管抽到的是谁。
+  // 实测（tests/tools/bossgrind.js 的二人队，每格 24 场）：不带治疗的平均胜率 47% → 77%，带治疗 75% → 87%；
+  // 整局机器人打第 1 地区 Boss 48% → 65%。第 2、3 地区不动 —— 平均家底打第 2 地区 Boss 本来就只有三四成，
+  // 「二层太简单」是赐福成型的队伍才有的体感，那一层先从小怪下手（见 MOB_FIX），见 docs/difficulty-638.md。
+  const BOSS_S1={hp:.85,at:.80};
+  const BOSS_FIX=[{hp:BOSS_GLOBAL.hp*BOSS_S1.hp,at:BOSS_GLOBAL.at*BOSS_S1.at,df:BOSS_GLOBAL.df},BOSS_GLOBAL,BOSS_GLOBAL];
   // v0.1.238：全体 Boss 的常规攻击 ×1.35（见 docs/design-answers.md 附九第三节）。
   // 实测（tests/spike.js）带机制 Boss 的「常规伤害 ÷ 我方总血」只有 14%，比无机制的
   // 19% 还低 —— 这就是「胡局几乎不掉血」的直接原因。×1.35 把它拉到 19%。
@@ -25706,15 +25741,18 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
     // （上面那段注释记着那次事故）。
     '教主'  :{hp:1.51,at:0.90}
   };
-  Game.enemyFix216={mob:MOB_FIX,elite:ELITE_FIX,boss:BOSS_FIX,bossTune:BOSS_TUNE,mobN:MOB_N_FIX};
+  Game.enemyFix216={mob:MOB_FIX,eliteAbs:ELITE_ABS,boss:BOSS_FIX,bossS1:BOSS_S1,bossTune:BOSS_TUNE,mobN:MOB_N_FIX};
   function fixEnemies216(){
     if(!on()||!combat)return;
     const stage=Math.max(1,Math.min(3,Number(run?.stage)||1));
     const isElite=!combat.isBoss&&!!run._eliteShape;
     const base=(combat.isBoss?BOSS_FIX:MOB_FIX)[stage-1];
     if(!base)return;
-    const ef=isElite?ELITE_FIX[stage-1]:(combat.isBoss?BOSS_TUNE[(combat.enemies?.[0]?.name)||'']:null);
-    let f=ef?{hp:base.hp*(ef.hp??1),at:base.at*(ef.at??1),df:base.df*(ef.df??1)}:base;
+    // 强敌直接用绝对倍率（ELITE_ABS），不经过 MOB_FIX；Boss 是全局 / 地区倍率 × 个体修正。
+    const abs=isElite?ELITE_ABS[stage-1]:null;
+    const ef=combat.isBoss?BOSS_TUNE[(combat.enemies?.[0]?.name)||'']:null;
+    let f=abs?{hp:abs.hp,at:abs.at,df:base.df}
+      :ef?{hp:base.hp*(ef.hp??1),at:base.at*(ef.at??1),df:base.df*(ef.df??1)}:base;
     if(!combat.isBoss&&!combat.isGamerMode){
       // v0.1.280：只数修正。普通战斗和强敌战斗共用同一张 MOB_N_FIX ——
       // 强敌那边原本是「ELITE_SHAPES 里写死一层 + ELITE_N_FIX 再修一层」，
@@ -26698,7 +26736,7 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
 
 <script>
 // ===== v0.1.231：强敌词缀系统 + 首批 4 条（issue #7）=====
-// 强敌在这之前只有数值（只数形态 + ELITE_FIX / MOB_N_FIX），打法和普通战斗完全一样，
+// 强敌在这之前只有数值（只数形态 + ELITE_ABS / MOB_N_FIX），打法和普通战斗完全一样，
 // 只是血更厚。词缀负责补上「难在哪里」。
 //
 // 三条设计原则（issue #7）：
@@ -26789,7 +26827,9 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
       const real=Game.absorbAllyShield?Game.absorbAllyShield(actor,back):back;
       actor.hp=Math.max(0,actor.hp-real);
       Game.log(`${target.name}的荆棘反弹了${back}点伤害给${actor.name}。`);
-      Game.attachLastCombatFx?.(actor.uid,`-${back}`,'damage');
+      // 伤害 / 治疗浮字都要带来源标签（tests/fxgold316.js 的不变式）—— 这一条和下面贪食那条原来漏了，
+      // 只是金线那几局一直没撞上这两种强敌，所以一直是绿的。
+      Game.attachLastCombatFx?.(actor.uid,`-${back}`,'damage',AFFIXES.thorns.name);
     }finally{reflecting=false}
   }
   const dmg231=newDamage;
@@ -26834,7 +26874,7 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
       if(back>0){
         e.hp+=back;
         Game.log(`${e.name}贪食：跟着回复了${back}点生命。`);
-        Game.attachLastCombatFx?.(e.id,`+${back}`,'heal');
+        Game.attachLastCombatFx?.(e.id,`+${back}`,'heal',AFFIXES.glutton.name);
       }
     }finally{feeding=false}
     return r;
@@ -27368,7 +27408,7 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
 
   // 挂在 startBattle 最外层：v0.1.216 的 fixEnemies216 也是包在 startBattle 上的，
   // 这个块在文件里更靠后 → 包装层更靠外 → 它的后处理跑在 fixEnemies216 之后，
-  // 所以这里乘到的是「已经过 MOB_FIX / ELITE_FIX 修正之后」的数值，正是想要的口径。
+  // 所以这里乘到的是「已经过 MOB_FIX / ELITE_ABS 修正之后」的数值，正是想要的口径。
   const startBattle237=Game.startBattle.bind(Game);
   Game.startBattle=function(...a){
     const r=startBattle237(...a);
@@ -32491,7 +32531,7 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
   };
 
   // 强度定死：开战的那一瞬把 run.stage 换成收取时的地区，建完敌人立刻换回来。
-  // 敌人池、MOB_FIX / ELITE_FIX、步数成长系数全都在 startBattle 里读 run.stage，
+  // 敌人池、MOB_FIX / ELITE_ABS、步数成长系数全都在 startBattle 里读 run.stage，
   // 一起包住就是「连内容带强度都是当时那一份」。必须是最外层，
   // 否则里面那些 fixEnemies216 / ease237 读到的还是现在的地区。
   // 换 run.stage 的这一小段窗口里有两个必须挡住的副作用：
@@ -32787,7 +32827,7 @@ Game.blessStage441=()=>Number(run?._blessStage441 ?? run?.stage)||0;
 //
 // 三条边界：
 //  · 强化后的敌人是**普通怪的数值**，只是变成 3 只并各带一条词缀。
-//    不走强敌那套 ELITE_FIX（HP×2.55 / ATK×1.9）—— 那是另一个难度档，
+//    不走强敌那套倍率（ELITE_ABS，HP×2.55 / ATK×1.9）—— 那是另一个难度档，
 //    叠上去就成了「必死的强敌 + 更好的报酬」，不是可以算账的加码。
 //  · 报酬只提高**稀有度一档**，不动金币和经验：这一场的风险来自战斗本身，
 //    金币经验按普通战斗给就够了，再乘倍率会让深潜变成刷钱最优解。
